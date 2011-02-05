@@ -1,1 +1,38 @@
+/* Color scheme from: http://www.colourlovers.com/palette/1443306/vintage_paper2 */
+html {
+	background-color: #EDFFEF;
+	color: #000;
+	font-family: Candara, "Bitstream Vera Sans", "DejaVu Sans", "Trebuchet MS", Verdana, sans-serif;
+}
 
+h1 {
+	color: #F03540;
+}
+
+h2 {
+	color: #61B46E;
+}
+
+h3 {
+	color: #2ED1CC;
+}
+
+h4 {
+	color: #D2C26A;
+}
+
+table {
+	width: 50%;
+	border-collapse: collapse;
+}
+
+table th {
+	background-color: #fff;
+	color: #F03540;
+	font-weight: bold;
+	text-align: left;
+	border-bottom: 2px solid #61B46E;
+}
+table td {
+	background-color: #fff;
+}

@@ -1,1 +1,52 @@
-<h1>Test</h1>
+<h1>MacroDeck Platform Test App</h1>
+<h2>Installed objects</h2>
+<% @data_objects.each do |obj| %>
+	<h3><%=h obj.title.nil? ? obj.object_type : obj.title %></h3>
+	<h4>Fields</h4>
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Type</th>
+				<th>Required</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% obj.fields.each do |field| %>
+				<tr>
+					<td>
+						<% if field[3] %>
+							<%= h field[3] %>
+						<% else %>
+							<%= h field[0] %>
+						<% end %>
+					</td>
+					<td>
+						<% if field[1] == "String" %>
+							Alphanumeric text
+						<% elsif field[1] == "Hash" %>
+							Key-value list
+						<% elsif field[1] == "Time" %>
+							Time/date
+						<% elsif field[1] == "Float" %>
+							Number (with decimals)
+						<% elsif field[1] == ["Float"] %>
+							List of numbers (with decimals)
+						<% elsif field[1] == ["String"] %>
+							List of alphanumeric text items
+						<% else %>
+							<%= h field[1] %>
+						<% end %>
+					</td>
+					<td>
+						<% if field[2] %>
+							Yes
+						<% else %>
+							No
+						<% end %>
+					</td>
+				</tr>
+			<% end %>
+		</tbody>
+	</table>
+<% end %>
