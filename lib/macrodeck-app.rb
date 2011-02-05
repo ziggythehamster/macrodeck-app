@@ -14,5 +14,9 @@ module MacroDeck
 			@data_objects = DataObjectDefinition.all
 			erb :index
 		end
+
+		get '/:object_type' do
+			#TODO: Use Rails's inflector to get the object name
+		end
 	end
 end
