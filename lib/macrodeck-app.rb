@@ -7,6 +7,13 @@ require 'erb'
 
 module MacroDeck
 	class App < Sinatra::Base
+		attr_accessor :configuration
+
+		def initialize(app, configuration)
+			self.configuration = configuration
+			super(app)
+		end
+
 		helpers do
 			include Rack::Utils
 			alias_method :h, :escape_html
@@ -35,7 +42,7 @@ module MacroDeck
 
 		get '/' do
 			@data_objects = DataObjectDefinition.all
-			erb :home, :layout => MD_CFG.layout.to_sym
+			erb :home, :layout => self.configuration.layout.to_sym
 		end
 
 		get '/:object_type/?' do
@@ -44,7 +51,7 @@ module MacroDeck
 			if !@object.nil?
 				# FIXME: Probably a bad idea to load ALL objects, right? :)
 				@objects = @object.all
-				erb :index, :layout => MD_CFG.layout.to_sym, :locals => { :objects => @objects }
+				erb :index, :layout => self.configuration.layout.to_sym, :locals => { :objects => @objects }
 			else
 				not_found
 			end
