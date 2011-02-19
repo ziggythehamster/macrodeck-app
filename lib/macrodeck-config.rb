@@ -9,10 +9,16 @@ module MacroDeck
 		attr_reader :layout
 
 		def initialize(yaml_path)
-			@config = YAML::load(yaml_path)
-			@environment = Sinatra::Application.environment
-			if @config[@environment]
-				@layout = @config[@environment]["layout"].nil? ? "layout.erb" : @config[@environment]["layout"]
+			File.open(yaml_path) do |yml|
+				@config = YAML::load(yml)
+			end
+			@environment = Sinatra::Application.environment.to_sym
+			if @config[@environment.to_s]
+				if @config[@environment.to_s]["layout"]
+					@layout = @config[@environment.to_s]["layout"]
+				else
+					@layout = "layout"
+				end
 			end
 		end
 	end
