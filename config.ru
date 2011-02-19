@@ -10,14 +10,21 @@ $LOAD_PATH << File.join(File.dirname(__FILE__), "lib")
 require "rubygems"
 require "sinatra"
 require "macrodeck-platform/init"
+require "macrodeck-app"
+require "macrodeck-config"
+
+# Load the config file.
+puts ">>> Loading configuration."
+MD_CFG = MacroDeck::Config.new(File.join(File.dirname(__FILE__), "config", "macrodeck.yml"))
 
 # Start the MacroDeck platform.
-puts "Starting MacroDeck Platform on macrodeck-#{settings.environment}"
-MacroDeck::Platform.start!("macrodeck-#{settings.environment}")
+puts ">>> Starting MacroDeck Platform on macrodeck-#{MD_CFG.environment}"
+MacroDeck::Platform.start!("macrodeck-#{MD_CFG.environment}")
 MacroDeck::PlatformDataObjects.define!
 
-# Our app
-require 'macrodeck-app'
+puts ">>> MacroDeck Platform started."
+
+# Run our app
 run MacroDeck::App
 
-# vi: set filetype=ruby fileencoding=UTF-8
+# vim:set ft=ruby
