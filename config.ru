@@ -8,6 +8,7 @@ $LOAD_PATH << File.join(File.dirname(__FILE__), "lib")
 
 # Ruby libraries.
 require "rubygems"
+require "builder"
 require "sinatra"
 require "macrodeck-platform/init"
 require "macrodeck-app"
