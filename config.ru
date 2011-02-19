@@ -16,16 +16,17 @@ require "macrodeck-config"
 
 # Load the config file.
 puts ">>> Loading configuration."
-MD_CFG = MacroDeck::Config.new(File.join(File.dirname(__FILE__), "config", "macrodeck.yml"))
+cfg = MacroDeck::Config.new(File.join(File.dirname(__FILE__), "config", "macrodeck.yml"))
 
 # Start the MacroDeck platform.
-puts ">>> Starting MacroDeck Platform on macrodeck-#{MD_CFG.environment}"
-MacroDeck::Platform.start!("macrodeck-#{MD_CFG.environment}")
+puts ">>> Starting MacroDeck Platform on macrodeck-#{cfg.environment}"
+MacroDeck::Platform.start!("macrodeck-#{cfg.environment}")
 MacroDeck::PlatformDataObjects.define!
 
 puts ">>> MacroDeck Platform started."
 
 # Run our app
-run MacroDeck::App
+use MacroDeck::App, cfg
+run Sinatra::Application
 
 # vim:set ft=ruby
