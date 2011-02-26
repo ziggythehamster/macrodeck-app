@@ -45,22 +45,40 @@ module MacroDeck
 			erb :home, :layout => self.configuration.layout.to_sym
 		end
 
-		get '/:object_type/?' do
-			@object = get_platform_object(params[:object_type])
+		# Index (odd count of splats)
+		get '/*' do
+			splat = params[:splat][0].split("/")
+			if splat.length % 2 > 0
+				@object = get_platform_object(splat[-1])
 
-			if !@object.nil?
-				# FIXME: Probably a bad idea to load ALL objects, right? :)
-				@objects = @object.all
-				erb :index, :layout => self.configuration.layout.to_sym, :locals => { :objects => @objects }
+				if !@object.nil?
+					# FIXME: Probably a bad idea to load ALL objects, right? :)
+					@objects = @object.all
+					erb :index, :layout => self.configuration.layout.to_sym, :locals => { :objects => @objects }
+				else
+					not_found
+				end
 			else
-				not_found
+				pass # To the show function.
 			end
 		end
 
-		get '/:object_type/:id/?' do
-			#TODO: Requesting a specific ID
+		# Show (even count of splats)
+		get '/*' do
+			splat = params[:splat][0].split("/")
+			if splat.length % 2 == 0
+				@object = get_platform_object(splat[-2])
+
+				if !@object.nil?
+					@item = @object.get(splat[-1])
+
+					if !@item.nil?
+						erb :show, :layout => self.configuration.layout.to_sym, :locals => { :item => @item }
+					else
+						not_found
+					end
+				end
+			end
 		end
-
-
 	end
 end
