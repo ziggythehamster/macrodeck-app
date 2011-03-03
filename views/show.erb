@@ -1,0 +1,22 @@
+<h1>MacroDeck Platform Test App</h1>
+<h2><%= h @item.title %></h2>
+
+<dl>
+	<%
+		num_fields_printed = 0
+		if @object.fields_by_priority
+			@object.fields_by_priority.each do |priority_set|
+				if num_fields_printed <= 5
+					priority_set[1].each do |f|
+	%>
+						<dt><%= @object.human_attribute_name(f.to_s) %></dt>
+						<dd><%= @item.send(f.to_sym) %></dd>
+
+						<% num_fields_printed = num_fields_printed + 1 %>
+	<%
+					end
+				end
+			end
+		end
+	%>
+</dl>
