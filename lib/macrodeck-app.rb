@@ -38,6 +38,7 @@ module MacroDeck
 			end
 		end
 
+		set :views, File.join(File.dirname(__FILE__), "..", self.configuration.view_dir.to_s)
 		set :public, File.join(File.dirname(__FILE__), "..", "public")
 
 		get '/' do
