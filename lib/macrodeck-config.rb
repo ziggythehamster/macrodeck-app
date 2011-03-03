@@ -7,6 +7,7 @@ module MacroDeck
 	class Config
 		attr_reader :environment
 		attr_reader :layout
+		attr_reader :view_dir
 
 		def initialize(yaml_path)
 			File.open(yaml_path) do |yml|
@@ -18,6 +19,12 @@ module MacroDeck
 					@layout = @config[@environment.to_s]["layout"]
 				else
 					@layout = "layout"
+				end
+
+				if @config[@environment.to_s]["view_dir"]
+					@view_dir = @config[@environment.to_s]["view_dir"]
+				else
+					@view_dir = "views"
 				end
 			end
 		end
