@@ -29,5 +29,6 @@ Behaviors
 	description			Render as a paragraph after title.
 	foursquare_venue_id		Render as a link to the venue.
 	foursquare_user_id		Render as a link to the user.
+	url				Render as a link to the URL.
 	(any Time/Date object)		Render as a locale-correct time/date.
 
