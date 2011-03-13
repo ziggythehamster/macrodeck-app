@@ -13,6 +13,9 @@ require "sinatra"
 require "macrodeck-platform/init"
 require "macrodeck-app"
 require "macrodeck-config"
+require "macrodeck-behavior"
+require "behaviors/abbreviation_behavior"
+require "behaviors/title_behavior"
 
 # Load the config file.
 puts ">>> Loading configuration."

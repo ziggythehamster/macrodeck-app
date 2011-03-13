@@ -1,6 +1,3 @@
-require "behaviors/abbreviation_behavior"
-require "behaviors/title_behavior"
-
 module MacroDeck
 	class Behavior
 		# Pass in the data object.
