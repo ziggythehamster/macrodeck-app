@@ -15,6 +15,9 @@ require "macrodeck-app"
 require "macrodeck-config"
 require "macrodeck-behavior"
 require "behaviors/abbreviation_behavior"
+require "behaviors/address_behavior"
+require "behaviors/description_behavior"
+require "behaviors/postal_code_behavior"
 require "behaviors/title_behavior"
 
 # Load the config file.
