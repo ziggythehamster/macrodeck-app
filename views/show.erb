@@ -7,19 +7,21 @@
 		@object.fields_by_priority.each do |priority_set|
 			if num_fields_printed <= 5
 				priority_set[1].each do |f|
-					behavior = "#{f.to_s}_behavior".camelize
-					behavior = "MacroDeck::#{behavior}"
+					unless @object.introspections[f.to_sym][:internal]
+						behavior = "#{f.to_s}_behavior".camelize
+						behavior = "MacroDeck::#{behavior}"
 %>
-					<% begin %>
-						<%= behavior.constantize.new(@item).to_html %>
-					<% rescue NameError %>
-						<dl>
-							<dt><%= @object.human_attribute_name(f.to_s) %></dt>
-							<dd><%= @item.send(f.to_sym) %></dd>
-						</dl>
-					<% end %>
-					<% num_fields_printed = num_fields_printed + 1 %>
+						<% begin %>
+							<%= behavior.constantize.new(@item).to_html %>
+						<% rescue NameError %>
+							<dl>
+								<dt><%= @object.human_attribute_name(f.to_s) %></dt>
+								<dd><%= @item.send(f.to_sym) %></dd>
+							</dl>
+						<% end %>
+						<% num_fields_printed = num_fields_printed + 1 %>
 <%
+					end
 				end
 			end
 		end
