@@ -1,8 +1,6 @@
 module MacroDeck
-	# An abbreviation should be outputted as (US) for example.
+	# An abbreviation should not be outputted (this is the default Behavior)
+	# It exists in the title.
 	class AbbreviationBehavior < Behavior
-		def to_html
-			"(#{@value})"
-		end
 	end
 end
