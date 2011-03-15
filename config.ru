@@ -17,6 +17,7 @@ require "macrodeck-behavior"
 require "behaviors/abbreviation_behavior"
 require "behaviors/address_behavior"
 require "behaviors/description_behavior"
+require "behaviors/phone_number_behavior"
 require "behaviors/postal_code_behavior"
 require "behaviors/title_behavior"
 
