@@ -3,9 +3,9 @@ module MacroDeck
 	class TitleBehavior < Behavior
 		def to_html
 			if @data_object[:abbreviation]
-				return "<h2>#{@data_object.title} (#{@data_object.abbreviation})</h2>"
+				return "<h2>#{Rack::Utils.escape_html(@data_object.title)} (#{Rack::Utils.escape_html(@data_object.abbreviation)})</h2>"
 			else
-				return "<h2>#{@data_object.title}</h2>"
+				return "<h2>#{Rack::Utils.escape_html(@data_object.title)}</h2>"
 			end
 		end
 	end
