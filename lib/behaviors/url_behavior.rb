@@ -3,9 +3,9 @@ module MacroDeck
 	class UrlBehavior < Behavior
 		def to_html
 			if @data_object.url =~ /^http:\/\// || @data_object.url =~ /^https:\/\//
-				return "<p><a href=\"#{@data_object.url}\" target=\"_blank\">#{@data_object.url}</a></p>"
+				return "<p><a href=\"#{Rack::Utils.escape_html(@data_object.url)}\" target=\"_blank\">#{Rack::Utils.escape_html(@data_object.url)}</a></p>"
 			else
-				return "<p><a href=\"http://#{@data_object.url}\" target=\"_blank\">#{@data_object.url}</a></p>"
+				return "<p><a href=\"http://#{Rack::Utils.escape_html(@data_object.url)}\" target=\"_blank\">#{Rack::Utils.escape_html(@data_object.url)}</a></p>"
 			end
 		end
 	end
