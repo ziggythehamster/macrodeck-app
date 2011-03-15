@@ -3,9 +3,9 @@ module MacroDeck
 	class AddressBehavior < Behavior
 		def to_html
 			if @data_object[:postal_code]
-				return "<p class=\"adr\"><span class=\"street-address\">#{@data_object.address}</span><br /><span class=\"postal-code\">#{@data_object.postal_code}</span></p>"
+				return "<p class=\"adr\"><span class=\"street-address\">#{Rack::Utils.escape_html(@data_object.address)}</span><br /><span class=\"postal-code\">#{Rack::Utils.escape_html(@data_object.postal_code)}</span></p>"
 			else
-				return "<p class=\"adr\"><span class=\"street-address\">#{@data_object.address}</span></p>"
+				return "<p class=\"adr\"><span class=\"street-address\">#{Rack::Utils.escape_html(@data_object.address)}</span></p>"
 			end
 		end
 	end
