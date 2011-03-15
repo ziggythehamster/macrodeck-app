@@ -20,6 +20,7 @@ require "behaviors/description_behavior"
 require "behaviors/phone_number_behavior"
 require "behaviors/postal_code_behavior"
 require "behaviors/title_behavior"
+require "behaviors/url_behavior"
 
 # Load the config file.
 puts ">>> Loading configuration."
