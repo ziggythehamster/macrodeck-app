@@ -29,3 +29,22 @@
 		end
 	end
 %>
+
+<h2>Children</h2>
+
+<%
+	level = @item.path.dup.length + 1
+%>
+
+<table>
+<% ::DataObject.view("by_path", :reduce => true, :group => true, :level => level)["rows"].each do |r| %>
+	<% if r["key"].length == level %>
+		<tr>
+			<td>
+				<%= DataObject.get(r["key"][-1]).title %>
+			</td>
+		</tr>
+	<% end %>
+<% end %>
+</table>
+
