@@ -1,17 +1,4 @@
 <h1>MacroDeck Platform Test App</h1>
 <h2>Viewing <%= h @object.to_s.pluralize %></h2>
 
-<table>
-	<thead>
-		<tr>
-			<th><%= h @object.human_attribute_name(:title) %></th>
-		</tr>
-	</thead>
-	<tbody>
-		<% objects.each do |obj| %>
-			<tr>
-				<td><a href="/<%= obj.class.to_s.underscore.pluralize %>/<%= h obj.id %>"><%= h obj.title %></a></td>
-			</tr>
-		<% end %>
-	</tbody>
-</table>
+<%= erb :'_list.html', :locals => { :object => @object, :objects => objects } %>
