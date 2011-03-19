@@ -1,13 +1,15 @@
 <table>
 	<thead>
-		<tr>
-			<th><%= h object.human_attribute_name(:title) %></th>
-		</tr>
+		<th>Title</th>
+		<th>Type</th>
 	</thead>
 	<tbody>
 		<% objects.each do |obj| %>
 			<tr>
 				<td><a href="/<%= obj.class.to_s.underscore.pluralize %>/<%= h obj.id %>"><%= h obj.title %></a></td>
+			</tr>
+			<tr>
+				<%= h obj['couchrest-type'] %>
 			</tr>
 		<% end %>
 	</tbody>
