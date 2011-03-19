@@ -7,9 +7,7 @@
 		<% objects.each do |obj| %>
 			<tr>
 				<td><a href="/<%= obj.class.to_s.underscore.pluralize %>/<%= h obj.id %>"><%= h obj.title %></a></td>
-			</tr>
-			<tr>
-				<%= h obj['couchrest-type'] %>
+				<td><%= h obj['couchrest-type'] %></td>
 			</tr>
 		<% end %>
 	</tbody>
