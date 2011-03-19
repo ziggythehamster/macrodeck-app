@@ -82,11 +82,16 @@ module MacroDeck
 						result = ::DataObject.view("by_path_alpha", :reduce => true, :group => true, :group_level => grouplevel, :startkey => startkey, :endkey => endkey)
 						if result["rows"]
 							result["rows"].each do |r|
-								children_ids << r.id
+								if r["key"][-1].include?("/")
+									children_ids << r["key"][-1].split("/")[1]
+								end
 							end
 						end
 						if children_ids.length > 0
-							@children = ::DataObject.get_bulk(children_ids)
+							docs = ::DataObject.database.get_bulk(children_ids)
+							if docs["rows"]
+								@children = docs["rows"].collect { |d| ::DataObject.create_from_database(d["doc"]) }
+							end
 						else
 							@children = nil
 						end
