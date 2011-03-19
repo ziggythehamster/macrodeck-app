@@ -74,6 +74,23 @@ module MacroDeck
 					@item = @object.get(splat[-1])
 
 					if !@item.nil?
+						# Get children
+						grouplevel = @item.path.dup.length + 1
+						startkey = @item.path.dup.push(0)
+						endkey = @item.path.dup.push({})
+						children_ids = []
+						result = ::DataObject.view("by_path_alpha", :reduce => true, :group => true, :group_level => grouplevel, :startkey => startkey, :endkey => endkey)
+						if result["rows"]
+							result["rows"].each do |r|
+								children_ids << r.id
+							end
+						end
+						if children_ids.length > 0
+							@children = ::DataObject.get_bulk(children_ids)
+						else
+							@children = nil
+						end
+
 						erb :show, :layout => self.configuration.layout.to_sym, :locals => { :item => @item }
 					else
 						not_found
