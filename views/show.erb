@@ -32,19 +32,4 @@
 
 <h2>Children</h2>
 
-<%
-	level = @item.path.dup.length + 1
-%>
-
-<table>
-<% ::DataObject.view("by_path_alpha", :reduce => true, :group => true, :group_level => level)["rows"].each do |r| %>
-	<% if r["key"].length == level && r["key"][-1].include?("/") %>
-		<tr>
-			<td>
-				<%= ::DataObject.get(r["key"][-1].split("/")[1]).title %>
-			</td>
-		</tr>
-	<% end %>
-<% end %>
-</table>
-
+<%= erb :'_list.html', :locals => { :objects => @children } %>
