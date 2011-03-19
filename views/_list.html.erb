@@ -4,11 +4,13 @@
 		<th>Type</th>
 	</thead>
 	<tbody>
-		<% objects.each do |obj| %>
-			<tr>
-				<td><a href="/<%= obj.class.to_s.underscore.pluralize %>/<%= h obj.id %>"><%= h obj.title %></a></td>
-				<td><%= h obj['couchrest-type'] %></td>
-			</tr>
+		<% if objects %>
+			<% objects.each do |obj| %>
+				<tr>
+					<td><a href="/<%= obj.class.to_s.underscore.pluralize %>/<%= h obj.id %>"><%= h obj.title %></a></td>
+					<td><%= h obj['couchrest-type'] %></td>
+				</tr>
+			<% end %>
 		<% end %>
 	</tbody>
 </table>
