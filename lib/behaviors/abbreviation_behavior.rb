@@ -5,7 +5,7 @@ module MacroDeck
 		def to_form_field
 			output = ""
 			output << form_label(:abbreviation)
-			output << form_input(:abbreviation, :text, :size => 3)
+			output << form_input(:abbreviation, :text, { :size => 3 })
 			return output
 		end
 	end
