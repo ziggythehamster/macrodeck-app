@@ -1,0 +1,23 @@
+<%
+
+if object.fields_by_priority
+	object.fields_by_priority.each do |priority_set|
+		priority_set[1].each do |f|
+			behavior = "#{f.to_s}_behavior".camelize
+			behavior = "MacroDeck::#{behavior}"
+%>
+			<% begin %>
+				<%= behavior.constantize.new(item).to_form_field %>
+			<% rescue NameError %>
+				<% unless object.introspections[f.to_sym][:internal] %>
+					<% if !item.send(f.to_sym).nil? && !item.send(f.to_sym) == "" %>
+						<!-- form field here -->
+					<% end %>
+				<% end %>
+			<% end %>
+<%
+		end
+	end
+end
+
+%>
