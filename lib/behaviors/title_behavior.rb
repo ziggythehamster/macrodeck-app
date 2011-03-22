@@ -8,5 +8,12 @@ module MacroDeck
 				return "<h2>#{Rack::Utils.escape_html(@data_object.title)}</h2>"
 			end
 		end
+
+		def to_form_field
+			output = ""
+			output << form_label(:title)
+			output << form_input(:title)
+			return output
+		end
 	end
 end
