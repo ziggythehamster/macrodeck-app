@@ -20,8 +20,12 @@ module MacroDeck
 
 		private
 			# Function to generate a form input tag.
-			def form_input(field, type = "text")
-				return "<input type=\"#{type}\" name=\"#{field.to_s}\" value=\"#{Rack::Utils.escape_html(@data_object.send(field.to_sym)}\" />"
+			def form_input(field, type = :text, options = {})
+				input = "<input type=\"#{type.to_s}\" name=\"#{field.to_s}\" value=\"#{Rack::Utils.escape_html(@data_object.send(field.to_sym)}\" "
+				options.each do |k,v|
+					input << "#{Rack::Utils.escape_html(k.to_s)}=\"#{Rack::Utils.escape_html(v.to_s)}\" "
+				end
+				input << "/>"
 			end
 
 			# Function to generate a form label. Can probably be modified to accept a block,
