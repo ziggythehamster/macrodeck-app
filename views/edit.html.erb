@@ -2,5 +2,5 @@
 <h2>Editing <%= MacroDeck::TitleBehavior.new(item).to_html %></h2>
 
 <form action="" method="post">
-	<%= erb :"_form.html", :locals => { :object => item } %>
+	<%= erb :"_form.html", :locals => { :object => object, :item => item } %>
 </form>
