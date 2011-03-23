@@ -1,6 +1,7 @@
 <h1>MacroDeck Platform Test App</h1>
-<h2>Editing <%= MacroDeck::TitleBehavior.new(item).to_html %></h2>
+<h2>Editing <%= Rack::Utils.escape_html(item.title) %></h2>
 
 <form action="" method="post">
+	<div class="field"><%= MacroDeck::TitleBehavior.new(item).to_form_field %></div>
 	<%= erb :"_form.html", :locals => { :object => object, :item => item } %>
 </form>
