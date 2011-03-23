@@ -46,6 +46,30 @@ module MacroDeck
 			erb :home, :layout => self.configuration.layout.to_sym
 		end
 
+		# Edit data type (odd count of splats)
+		get '/*/edit/?' do
+			splat = params[:splat][0].split("/")
+			pass unless splat.length % 2 > 0
+
+			# edit data type
+			not_found
+		end
+
+		# Edit data item (even count of splats)
+		get '/*/edit/?' do
+			splat = params[:splat][0].split("/")
+			pass unless splat.length % 2 == 0
+			@object = get_platform_object(splat[-2])
+
+			if !@object.nil?
+				@item = @object.get(splat[-1])
+
+				if !@item.nil?
+					erb :"edit.html", :layout => self.configuration.layout.to_sym, :locals => { :item => @item }
+				end
+			end
+		end
+
 		# Index (odd count of splats)
 		get '/*' do
 			splat = params[:splat][0].split("/")
