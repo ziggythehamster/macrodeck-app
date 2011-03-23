@@ -65,7 +65,7 @@ module MacroDeck
 				@item = @object.get(splat[-1])
 
 				if !@item.nil?
-					erb :"edit.html", :layout => self.configuration.layout.to_sym, :locals => { :item => @item }
+					erb :"edit.html", :layout => self.configuration.layout.to_sym, :locals => { :item => @item, :object => @object }
 				end
 			end
 		end
