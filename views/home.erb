@@ -16,7 +16,11 @@
 				<tr>
 					<td>
 						<% if field[3] %>
-							<%= h field[3] %>
+							<% if field[3].is_a?(Hash) %>
+								<%= h field[3]["title"] %>
+							<% else %>
+								<%= h field[3] %>
+							<% end %>
 						<% else %>
 							<%= h field[0] %>
 						<% end %>
