@@ -77,6 +77,30 @@ module MacroDeck
 			end
 		end
 
+		# Update data item (even count of splats)
+		put '/*' do
+			splat = params[:splat][0].split("/")
+			pass unless splat.length % 2 == 0
+			@object = get_platform_object(splat[-2])
+			if !@object.nil?
+				@item = @object.get(splat[-1])
+				@object.properties.each do |f|
+					unless params[f.name.to_sym].nil?
+						if @item[f.name.to_sym] == ""
+							@item[f.name.to_sym] = nil
+						else
+							@item[f.name.to_sym] = params[f.name.to_sym]
+						end
+					end
+				end
+
+				# Set update properties, except the user isn't yet known.
+				@item.updated_by = "_system/MacroDeckApp"
+
+				# Save the object here, then redirect, but not done yet.
+			end
+		end
+
 		# Index (odd count of splats)
 		get '/*' do
 			splat = params[:splat][0].split("/")
