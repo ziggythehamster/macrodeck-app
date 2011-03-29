@@ -37,6 +37,12 @@ module MacroDeck
 					return nil
 				end
 			end
+
+			# Returns a path to +obj+
+			def item_path(obj)
+				klass = obj.class.to_s.underscore.pluralize
+				return "/#{klass}/#{obj.id}"
+			end
 		end
 
 		set :public, File.join(File.dirname(__FILE__), "..", "public")
