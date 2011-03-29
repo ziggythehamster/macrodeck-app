@@ -1,7 +1,9 @@
 <h1>MacroDeck Platform Test App</h1>
 <h2>Editing <%= Rack::Utils.escape_html(item.title) %></h2>
 
-<form action="" method="post">
+<form action="<%= item_path(item) %>" method="post">
+	<input type="hidden" name="_method" value="put" />
 	<div class="field"><%= MacroDeck::TitleBehavior.new(item).to_form_field %></div>
 	<%= erb :"_form.html", :locals => { :object => object, :item => item } %>
+	<input type="submit" value="Update" />
 </form>
