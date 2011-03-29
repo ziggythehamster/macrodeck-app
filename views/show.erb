@@ -1,6 +1,8 @@
 <h1>MacroDeck Platform Test App</h1>
 <%= MacroDeck::TitleBehavior.new(@item).to_html %>
 
+<p><a href="<%= item_path(@item) %>/edit">edit</a></p>
+
 <%
 	num_fields_printed = 0
 	if @object.fields_by_priority
