@@ -8,6 +8,7 @@ require 'erb'
 module MacroDeck
 	class App < Sinatra::Base
 		attr_accessor :configuration
+		use Rack::MethodOverride # Allow browsers to use a RESTful API
 
 		def initialize(app, configuration)
 			self.configuration = configuration
