@@ -152,7 +152,7 @@ module MacroDeck
 				if !@object.nil?
 					# FIXME: Probably a bad idea to load ALL objects, right? :)
 					@objects = @object.all
-					erb :index, :layout => self.configuration.layout.to_sym, :locals => { :objects => @objects }
+					erb :index, :layout => self.configuration.layout.to_sym, :locals => { :object => @object, :objects => @objects }
 				else
 					not_found
 				end
