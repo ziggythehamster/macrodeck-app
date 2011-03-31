@@ -62,6 +62,38 @@ module MacroDeck
 			not_found
 		end
 
+		# Create a new data item (odd count of splats)
+		post '/*' do
+			splat = params[:splat][0].split("/")
+			pass unless splat.length % 2 > 0
+
+			@object = get_platform_object(splat[-1])
+
+			if !@object.nil?
+				@item = @object.new
+				@item.created_by = "_system/MacroDeckApp"
+
+				if @item.save
+					redirect item_path(@item)
+				else
+					erb :"new.html", :layout => self.configuration.layout.to_sym, :locals => { :item => @item, :object => @object }
+				end
+			end
+		end
+
+		# Render the interface for creating a new data item (odd count of splats)
+		get '/*/new/?' do
+			splat = params[:splat][0].split("/")
+			pass unless splat.length % 2 > 0
+			@object = get_platform_object(splat[-1])
+
+			if !@object.nil?
+				@item = @object.new
+
+				erb :"new.html", :layout => self.configuration.layout.to_sym, :locals => { :item => @item, :object => @object }
+			end
+		end
+
 		# Edit data item (even count of splats)
 		get '/*/edit/?' do
 			splat = params[:splat][0].split("/")
