@@ -1,5 +1,5 @@
 <h1>MacroDeck Platform Test App</ih1>
-<h2>New <%= h object.to_s.pluralize %></h2>
+<h2>New <%= h object.to_s %></h2>
 
 <form action="<%= items_path(object) %>" method="post">
 	<div class="field"><%= MacroDeck::TitleBehavior.new(item).to_form_field %></div>
