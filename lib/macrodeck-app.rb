@@ -77,6 +77,11 @@ module MacroDeck
 
 			if !@object.nil?
 				@item = @object.new
+
+				@object.properties.each do |f|
+					@item[f.name.to_sym] = params[f.name.to_sym] unless params[f.name.to_sym].nil?
+				end
+
 				@item.created_by = "_system/MacroDeckApp"
 
 				if @item.save
