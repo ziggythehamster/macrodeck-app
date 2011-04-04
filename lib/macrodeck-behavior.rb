@@ -20,12 +20,31 @@ module MacroDeck
 
 		private
 			# Function to generate a form input tag.
+			# Also handles an array. If it's an array though, options are sent to each input created.
 			def form_input(field, type = :text, options = {})
-				input = "<input type=\"#{Rack::Utils.escape_html(type.to_s)}\" name=\"#{Rack::Utils.escape_html(field.to_s)}\" value=\"#{Rack::Utils.escape_html(@data_object.send(field.to_sym))}\" "
-				options.each do |k,v|
-					input << "#{Rack::Utils.escape_html(k.to_s)}=\"#{Rack::Utils.escape_html(v.to_s)}\" "
+				if @data_object.send(field.to_sym).is_a?(Array)
+					input = "<!-- begin array -->\n"
+
+					@data_object.send(field.to_sym).each do |val|
+						input << "<input type=\"#{Rack::Utils.escape_html(type.to_s)}\" name=\"#{Rack::Utils.escape_html(field.to_s)}[]\" value=\"#{Rack::Utils.escape_html(val)}\" "
+						options.each do |k,v|
+							input << "#{Rack::Utils.escape_html(k.to_s)}=\"#{Rack::Utils.escape_html(v.to_s)}\" "
+						end
+						input << "/>\n"
+					end
+
+					input << "<p>Add (not working)</p>\n"
+					input << "<!-- end array -->\n"
+				else
+					input = "<input type=\"#{Rack::Utils.escape_html(type.to_s)}\" name=\"#{Rack::Utils.escape_html(field.to_s)}\" value=\"#{Rack::Utils.escape_html(@data_object.send(field.to_sym))}\" "
+					options.each do |k,v|
+						input << "#{Rack::Utils.escape_html(k.to_s)}=\"#{Rack::Utils.escape_html(v.to_s)}\" "
+					end
+
+					input << "/>"
 				end
-				input << "/>"
+
+				return input
 			end
 
 			# Function to generate a form label. Can probably be modified to accept a block,
