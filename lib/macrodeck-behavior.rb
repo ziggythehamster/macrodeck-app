@@ -33,7 +33,15 @@ module MacroDeck
 						input << "/><br />\n"
 					end
 
-					input << "<p>Add (not working)</p>\n"
+					# Build a blank input for the add button.
+					blank_input  = "<input type=\"#{Rack::Utils.escape_html(type.to_s)}\" name=\"#{Rack::Utils.escape_html(field.to_s)}[]\" "
+					options.each do |k,v|
+						blank_input << "#{Rack::Utils.escape_html(k.to_s)}=\"#{Rack::Utils.escape_html(v.to_s)}\" "
+					end
+					blank_input << "/><br />"
+					blank_input.gsub!('"', "\\\\'")
+
+					input << "<a id=\"addbutton-#{Rack::Utils.escape_html(field.to_s)}\" href=\"#\" onclick=\"$(this).before('#{blank_input}');\">add item to list</a>\n"
 					input << "<!-- end array -->\n"
 				else
 					input = "<input type=\"#{Rack::Utils.escape_html(type.to_s)}\" name=\"#{Rack::Utils.escape_html(field.to_s)}\" value=\"#{Rack::Utils.escape_html(@data_object.send(field.to_sym))}\" "
