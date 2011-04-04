@@ -30,7 +30,7 @@ module MacroDeck
 						options.each do |k,v|
 							input << "#{Rack::Utils.escape_html(k.to_s)}=\"#{Rack::Utils.escape_html(v.to_s)}\" "
 						end
-						input << "/>\n"
+						input << "/><br />\n"
 					end
 
 					input << "<p>Add (not working)</p>\n"
@@ -50,7 +50,11 @@ module MacroDeck
 			# Function to generate a form label. Can probably be modified to accept a block,
 			# in which case we should include the input inside the label tag.
 			def form_label(field)
-				return "<label for=\"#{Rack::Utils.escape_html(field.to_s)}\">#{Rack::Utils.escape_html(@data_object.class.human_attribute_name(field.to_sym))}</label>"
+				if @data_object.send(field.to_sym).is_a?(Array)
+					return "<label for=\"#{Rack::Utils.escape_html(field.to_s)}[]\">#{Rack::Utils.escape_html(@data_object.class.human_attribute_name(field.to_sym))}</label>"
+				else
+					return "<label for=\"#{Rack::Utils.escape_html(field.to_s)}\">#{Rack::Utils.escape_html(@data_object.class.human_attribute_name(field.to_sym))}</label>"
+				end
 			end
 	end
 end
