@@ -1,6 +1,8 @@
 <h1>MacroDeck Platform Test App</h1>
 <%= MacroDeck::TitleBehavior.new(@item).to_html %>
 
+<pre><%= @item.expanded_path.inspect %></pre>
+
 <p><a href="<%= item_path(@item) %>/edit">edit</a></p>
 
 <%
