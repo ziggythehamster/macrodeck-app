@@ -107,7 +107,7 @@ module MacroDeck
 				end
 
 				@item.created_by = "_system/MacroDeckApp"
-				@item.id = params[:id]
+				@item.id = UUIDTools::UUID.random_create.to_s
 				@item.path = url_path_to_item_path(params[:splat][0]) << @item.id
 
 
