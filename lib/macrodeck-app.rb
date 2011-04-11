@@ -170,7 +170,7 @@ module MacroDeck
 				# Set update properties, except the user isn't yet known.
 				@item.updated_by = "_system/MacroDeckApp"
 
-				if @item.save
+				if @item.valid? && @item.save
 					redirect item_path(@item)
 				else
 					erb :"edit.html", :layout => self.configuration.layout.to_sym, :locals => { :item => @item, :object => @object }
