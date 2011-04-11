@@ -1,8 +1,14 @@
 # The core of the MacroDeck application.
 # Need a way to handle extensions and allow extending this base app with more stuff.
 
+# Gems used by this lib.
+gem "activesupport"
+gem "uuidtools"
+
+# Things to require.
 require 'sinatra/base'
 require 'active_support' # For the inflector.
+require 'uuidtools'
 require 'erb'
 
 module MacroDeck
@@ -45,7 +51,7 @@ module MacroDeck
 
 				item_path = []
 				path_tok.each_index do |idx|
-					item_path << path_tok[idx] if idx % 2 == 0
+					item_path << path_tok[idx] if idx % 2 > 0
 				end
 
 				return item_path
@@ -118,6 +124,10 @@ module MacroDeck
 
 			if !@object.nil?
 				@item = @object.new
+				@item.id = UUIDTools::UUID.random_create.to_s
+				item_path = url_path_to_item_path(params[:splat][0])
+				item_path << @item.id
+				@item.path = item_path
 
 				erb :"new.html", :layout => self.configuration.layout.to_sym, :locals => { :item => @item, :object => @object }
 			end
