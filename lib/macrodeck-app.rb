@@ -108,7 +108,7 @@ module MacroDeck
 
 				@item.created_by = "_system/MacroDeckApp"
 
-				if @item.save
+				if @item.valid? && @item.save
 					redirect item_path(@item)
 				else
 					erb :"new.html", :layout => self.configuration.layout.to_sym, :locals => { :item => @item, :object => @object }
