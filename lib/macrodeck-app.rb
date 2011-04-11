@@ -39,6 +39,18 @@ module MacroDeck
 				end
 			end
 
+			# Returns an array of the path from the specified URL fragment.
+			def url_path_to_item_path(path)
+				path_tok = path.split("/")
+
+				item_path = []
+				path_tok.each_index do |idx|
+					item_path << path_tok[idx] if idx % 2 == 0
+				end
+
+				return item_path
+			end
+
 			# Returns a path to +item+, using its expanded path info.
 			def item_path(item)
 				path = ""
