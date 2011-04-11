@@ -128,6 +128,7 @@ module MacroDeck
 				item_path = url_path_to_item_path(params[:splat][0])
 				item_path << @item.id
 				@item.path = item_path
+				@item.created_by = "_system/MacroDeckApp"
 
 				erb :"new.html", :layout => self.configuration.layout.to_sym, :locals => { :item => @item, :object => @object }
 			end
