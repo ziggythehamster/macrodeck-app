@@ -107,6 +107,9 @@ module MacroDeck
 				end
 
 				@item.created_by = "_system/MacroDeckApp"
+				@item.id = params[:id]
+				@item.path = url_path_to_item_path(params[:splat][0]) << @item.id
+
 
 				if @item.valid? && @item.save
 					redirect item_path(@item)
@@ -125,9 +128,7 @@ module MacroDeck
 			if !@object.nil?
 				@item = @object.new
 				@item.id = UUIDTools::UUID.random_create.to_s
-				item_path = url_path_to_item_path(params[:splat][0])
-				item_path << @item.id
-				@item.path = item_path
+				@item.path = url_path_to_item_path(params[:splat][0]) << @item.id
 				@item.created_by = "_system/MacroDeckApp"
 
 				erb :"new.html", :layout => self.configuration.layout.to_sym, :locals => { :item => @item, :object => @object }
