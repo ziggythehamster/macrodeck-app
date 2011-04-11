@@ -39,10 +39,16 @@ module MacroDeck
 				end
 			end
 
-			# Returns a path to +item+
+			# Returns a path to +item+, using its expanded path info.
 			def item_path(item)
-				klass = item.class.to_s.underscore.pluralize
-				return "/#{klass}/#{item.id}"
+				path = ""
+				exp_path = item.expanded_path
+
+				exp_path.each do |p|
+					path << "/#{p[0].underscore.pluralize}/#{p[1]}"
+				end
+
+				return path
 			end
 
 			# Returns a path to the object from the +obj+ passed in.
