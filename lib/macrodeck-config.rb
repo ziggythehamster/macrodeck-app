@@ -8,6 +8,7 @@ module MacroDeck
 		attr_reader :environment
 		attr_reader :layout
 		attr_reader :view_dir
+		attr_reader :path_prefix
 
 		def initialize(yaml_path)
 			File.open(yaml_path) do |yml|
@@ -25,6 +26,12 @@ module MacroDeck
 					@view_dir = @config[@environment.to_s]["view_dir"]
 				else
 					@view_dir = "views"
+				end
+
+				if @config[@environment.to_s]["path_prefix"]
+					@path_prefix = @config[@environment.to_s]["path_prefix"]
+				else
+					@path_prefix = "/"
 				end
 			end
 		end
