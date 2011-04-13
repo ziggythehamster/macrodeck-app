@@ -73,7 +73,7 @@ module MacroDeck
 
 		get '/' do
 			@data_objects = DataObjectDefinition.all
-			erb :home, :layout => self.configuration.layout.to_sym
+			erb :"home.html", :layout => self.configuration.layout.to_sym
 		end
 
 		# Edit data type (odd count of splats)
@@ -187,7 +187,7 @@ module MacroDeck
 					endkey = path.dup.push({})
 
 					@objects = @object.view("by_path_alpha", :reduce => false, :startkey => startkey, :endkey => endkey)
-					erb :index, :layout => self.configuration.layout.to_sym, :locals => { :object => @object, :objects => @objects }
+					erb :"index.html", :layout => self.configuration.layout.to_sym, :locals => { :object => @object, :objects => @objects }
 				else
 					not_found
 				end
@@ -228,7 +228,7 @@ module MacroDeck
 							@children = nil
 						end
 
-						erb :show, :layout => self.configuration.layout.to_sym, :locals => { :item => @item }
+						erb :"show.html", :layout => self.configuration.layout.to_sym, :locals => { :item => @item }
 					else
 						not_found
 					end
