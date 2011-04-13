@@ -13,14 +13,9 @@ require 'erb'
 
 module MacroDeck
 	class App < Sinatra::Base
-		attr_accessor :configuration
-		use Rack::MethodOverride # Allow browsers to use a RESTful API
+		cattr_accessor :configuration
 
-		def initialize(app, configuration)
-			self.configuration = configuration
-			set :views, File.join(File.dirname(__FILE__), "..", self.configuration.view_dir.to_s)
-			super(app)
-		end
+		use Rack::MethodOverride # Allow browsers to use a RESTful API
 
 		helpers do
 			include Rack::Utils
@@ -75,8 +70,6 @@ module MacroDeck
 				return "/#{klass}"
 			end
 		end
-
-		set :public, File.join(File.dirname(__FILE__), "..", "public")
 
 		get '/' do
 			@data_objects = DataObjectDefinition.all

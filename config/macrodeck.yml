@@ -2,3 +2,4 @@
 development:
   layout: layout
   view_dir: views
+  path_prefix: /admin/

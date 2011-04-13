@@ -36,7 +36,12 @@ MacroDeck::PlatformDataObjects.define!
 puts ">>> MacroDeck Platform started."
 
 # Run our app
-use MacroDeck::App, cfg
-run Sinatra::Application
+map cfg.path_prefix do
+	MacroDeck::App.configuration = cfg
+	MacroDeck::App.set :views, File.join(File.dirname(__FILE__), ::MacroDeck::App.configuration.view_dir.to_s)
+	MacroDeck::App.set :public, File.join(File.dirname(__FILE__), "public")
+
+	run MacroDeck::App
+end
 
 # vim:set ft=ruby
