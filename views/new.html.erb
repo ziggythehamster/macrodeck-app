@@ -2,7 +2,6 @@
 <h2>New <%= h object.to_s %></h2>
 
 <form action="<%= items_path(object) %>" method="post">
-	<div class="field"><%= MacroDeck::TitleBehavior.new(item).to_form_field %></div>
 	<%= erb :"_form.html", :locals => { :object => object, :item => item } %>
 	<input type="submit" value="Create" />
 </form>
