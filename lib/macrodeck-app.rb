@@ -189,8 +189,11 @@ module MacroDeck
 				@object = get_platform_object(splat[-1])
 
 				if !@object.nil?
-					# FIXME: Probably a bad idea to load ALL objects, right? :)
-					@objects = @object.all
+					path = url_path_to_item_path(params[:splat][0])
+					startkey = path.dup.push(0)
+					endkey = path.dup.push({})
+
+					@objects = @object.view("by_path_alpha", :reduce => false, :startkey => startkey, :endkey => endkey)
 					erb :index, :layout => self.configuration.layout.to_sym, :locals => { :object => @object, :objects => @objects }
 				else
 					not_found
