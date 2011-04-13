@@ -107,6 +107,8 @@ module MacroDeck
 				end
 
 				@item.created_by = "_system/MacroDeckApp"
+				@item.updated_by = "_system/MacroDeckApp"
+				@item.owned_by = "_system"
 				@item.id = UUIDTools::UUID.random_create.to_s
 				@item.path = url_path_to_item_path(params[:splat][0]) << @item.id
 
@@ -130,6 +132,8 @@ module MacroDeck
 				@item.id = UUIDTools::UUID.random_create.to_s
 				@item.path = url_path_to_item_path(params[:splat][0]) << @item.id
 				@item.created_by = "_system/MacroDeckApp"
+				@item.updated_by = "_system/MacroDeckApp"
+				@item.owned_by = "_system"
 
 				erb :"new.html", :layout => self.configuration.layout.to_sym, :locals => { :item => @item, :object => @object }
 			end
