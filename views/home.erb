@@ -1,7 +1,7 @@
 <h1>MacroDeck Platform Test App</h1>
 <h2>Installed objects</h2>
 <% @data_objects.each do |obj| %>
-	<h3><a href="/<%= h obj.object_type.pluralize.underscore %>/"><%=h obj.title.nil? ? obj.object_type : obj.title %></a></h3>
+	<h3><a href="<%= items_path(obj.object_type) %>"><%=h obj.title.nil? ? obj.object_type : obj.title %></a></h3>
 	<h4>Fields</h4>
 	<table>
 		<thead>
