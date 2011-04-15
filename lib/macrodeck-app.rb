@@ -65,9 +65,21 @@ module MacroDeck
 			end
 
 			# Returns a path to the object from the +obj+ passed in.
-			def items_path(obj)
-				klass = obj.to_s.underscore.pluralize
-				return "#{self.configuration.path_prefix.to_s}#{klass}"
+			def items_path(obj, parent_item = nil)
+				if parent_item
+					path = self.configuration.path_prefix.to_s
+					exp_path = parent_item.expanded_path
+
+					exp_path.each do |p|
+						path << "#{p[0].underscore.pluralize}/#{p[1]}/"
+					end
+
+					path << obj.to_s.underscore.pluralize
+					return path
+				else
+					klass = obj.to_s.underscore.pluralize
+					return "#{self.configuration.path_prefix.to_s}#{klass}"
+				end
 			end
 		end
 
