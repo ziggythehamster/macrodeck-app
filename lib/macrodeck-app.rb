@@ -240,6 +240,9 @@ module MacroDeck
 							@children = nil
 						end
 
+						# Get a list of data object types.
+						@data_objects = DataObjectDefinition.all
+
 						erb :"show.html", :layout => self.configuration.layout.to_sym, :locals => { :item => @item }
 					else
 						not_found

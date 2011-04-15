@@ -34,4 +34,10 @@
 
 <h2>Children</h2>
 
+<p>new:
+<% @data_objects.each do |o| %>
+	<a href="<%= item_path(@item) %><%= h o.object_type.underscore.pluralize %>/new"><%= h o.object_type.downcase %></a> 
+<% end %>
+</p>
+
 <%= erb :'_list.html', :locals => { :objects => @children } %>
