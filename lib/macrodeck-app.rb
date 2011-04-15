@@ -54,7 +54,7 @@ module MacroDeck
 
 			# Returns a path to +item+, using its expanded path info.
 			def item_path(item)
-				path = self.configuration.path_prefix.to_s
+				path = self.configuration.path_prefix.to_s.dup
 				exp_path = item.expanded_path
 
 				exp_path.each do |p|
@@ -67,7 +67,7 @@ module MacroDeck
 			# Returns a path to the object from the +obj+ passed in.
 			def items_path(obj, parent_item = nil)
 				if parent_item
-					path = self.configuration.path_prefix.to_s
+					path = self.configuration.path_prefix.to_s.dup
 					exp_path = parent_item.expanded_path
 
 					exp_path.each do |p|
@@ -78,7 +78,7 @@ module MacroDeck
 					return path
 				else
 					klass = obj.to_s.underscore.pluralize
-					return "#{self.configuration.path_prefix.to_s}#{klass}"
+					return "#{self.configuration.path_prefix.to_s.dup}#{klass}"
 				end
 			end
 		end
