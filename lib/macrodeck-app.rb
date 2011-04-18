@@ -117,11 +117,17 @@ module MacroDeck
 				@item.id = UUIDTools::UUID.random_create.to_s
 				@item.path = url_path_to_item_path(params[:splat][0]) << @item.id
 
+				if @item.path.length < 2
+					@parent = nil
+				else
+					@parent = ::DataObject.get(@item.path[-2])
+				end
+
 
 				if @item.valid? && @item.save
 					redirect item_path(@item)
 				else
-					erb :"new.html", :layout => self.configuration.layout.to_sym, :locals => { :item => @item, :object => @object }
+					erb :"new.html", :layout => self.configuration.layout.to_sym, :locals => { :item => @item, :object => @object, :parent => @parent }
 				end
 			end
 		end
@@ -139,8 +145,13 @@ module MacroDeck
 				@item.created_by = "_system/MacroDeckApp"
 				@item.updated_by = "_system/MacroDeckApp"
 				@item.owned_by = "_system"
+				if @item.path.length < 2
+					@parent = nil
+				else
+					@parent = ::DataObject.get(@item.path[-2])
+				end
 
-				erb :"new.html", :layout => self.configuration.layout.to_sym, :locals => { :item => @item, :object => @object }
+				erb :"new.html", :layout => self.configuration.layout.to_sym, :locals => { :item => @item, :object => @object, :parent => @parent }
 			end
 		end
 
