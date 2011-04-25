@@ -90,7 +90,9 @@ module MacroDeck
 			root_ids = []
 			if reduce_root["rows"]
 				reduce_root["rows"].each do |r|
-					root_ids << r["key"].split("/")[1] if r["key"].include?("/")
+					if r["key"][0].include?("/")
+						root_ids << r["key"][0].split("/")[1]
+					end
 				end
 
 				docs = ::DataObject.database.get_bulk(root_ids)
