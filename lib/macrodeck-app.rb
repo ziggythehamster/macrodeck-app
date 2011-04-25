@@ -85,6 +85,18 @@ module MacroDeck
 
 		get '/' do
 			@data_objects = DataObjectDefinition.all
+			@root_items = []
+			reduce_root = ::DataObject.view("by_path_alpha", :include_docs => false, :reduce => true, :group => true, :group_level => 1)
+			root_ids = []
+			if reduce_root["rows"]
+				reduce_root["rows"].each do |r|
+					root_ids << r["key"].split("/")[1] if r["key"].include?("/")
+				end
+
+				docs = ::DataObject.database.get_bulk(root_ids)
+				@root_items = docs["rows"].collect { |d| ::DataObject.create_from_database(d["doc"]) } if docs["rows"]
+			end
+
 			erb :"home.html", :layout => self.configuration.layout.to_sym
 		end
 
