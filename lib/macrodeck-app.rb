@@ -81,6 +81,16 @@ module MacroDeck
 					return "#{self.configuration.path_prefix.to_s.dup}#{klass}"
 				end
 			end
+
+			# Populates @item_path from the item path (see url_path_to_item_path)
+			def get_item_path(ids)
+				docs = ::DataObject.database.get_bulk(ids)
+				if docs["rows"]
+					@item_path = docs["rows"].collect { |d| ::DataObject.create_from_database(d["doc"]) }
+				else
+					@item_path = nil
+				end
+			end
 		end
 
 		get '/' do
