@@ -163,6 +163,8 @@ module MacroDeck
 			@object = get_platform_object(splat[-1])
 
 			if !@object.nil?
+				get_item_path(url_path_to_item_path(params[:splat][0]))
+
 				@item = @object.new
 				@item.id = UUIDTools::UUID.random_create.to_s
 				@item.path = url_path_to_item_path(params[:splat][0]) << @item.id
@@ -187,6 +189,7 @@ module MacroDeck
 
 			if !@object.nil?
 				@item = @object.get(splat[-1])
+				get_item_path(url_path_to_item_path(params[:splat][0]))
 
 				if !@item.nil?
 					erb :"edit.html", :layout => self.configuration.layout.to_sym, :locals => { :item => @item, :object => @object }
@@ -229,6 +232,8 @@ module MacroDeck
 				@object = get_platform_object(splat[-1])
 
 				if !@object.nil?
+					get_item_path(url_path_to_item_path(params[:splat][0]))
+
 					path = url_path_to_item_path(params[:splat][0])
 					startkey = path.dup.push(0)
 					endkey = path.dup.push({})
@@ -253,6 +258,8 @@ module MacroDeck
 					@item = @object.get(splat[-1])
 
 					if !@item.nil?
+						get_item_path(url_path_to_item_path(params[:splat][0]))
+
 						# Get children
 						grouplevel = @item.path.dup.length + 1
 						startkey = @item.path.dup.push(0)
