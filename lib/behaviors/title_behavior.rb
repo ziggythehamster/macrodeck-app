@@ -1,11 +1,22 @@
 module MacroDeck
 	# Renders a title as a heading.
 	class TitleBehavior < Behavior
-		def to_html
+		# Pass in :append or :prepend with code that will be inserted before the title text or after it
+		def to_html(options = {})
 			if @data_object[:abbreviation]
-				return "<h2>#{Rack::Utils.escape_html(@data_object.title)} (#{Rack::Utils.escape_html(@data_object.abbreviation)})</h2>"
+				html =  "<h2>"
+				html << options[:prepend] unless options[:prepend].nil?
+				html << "#{Rack::Utils.escape_html(@data_object.title)} (#{Rack::Utils.escape_html(@data_object.abbreviation)})"
+				html << options[:append] unless options[:append].nil?
+				html << "</h2>"
+				return html
 			else
-				return "<h2>#{Rack::Utils.escape_html(@data_object.title)}</h2>"
+				html =  "<h2>"
+				html << options[:prepend] unless options[:prepend].nil?
+				html << "#{Rack::Utils.escape_html(@data_object.title)}"
+				html << options[:append] unless options[:append].nil?
+				html << "</h2>"
+				return html
 			end
 		end
 
