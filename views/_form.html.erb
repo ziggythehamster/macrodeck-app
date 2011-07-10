@@ -1,12 +1,4 @@
-<% if item.errors %>
-	<div class="errors">
-		<ul>
-			<% item.errors.full_messages.each do |e| %>
-				<li><%= h e %></li>
-			<% end %>
-		</ul>
-	</div>
-<% end %>
+<%= erb :"_form_errors.html", :locals => { :item => item } %>
 
 <div class="field"><%= MacroDeck::TitleBehavior.new(item).to_form_field %></div>
 
