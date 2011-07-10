@@ -1,0 +1,10 @@
+<% if behavior.nil? %>
+	<div class="field">
+		<label for="<%= Rack::Utils.escape_html(field.to_s) %>"><%= Rack::Utils.escape_html(item.class.human_attribute_name(field.to_sym)) %></label>
+		<input type="text" name="<%= Rack::Utils.escape_html(field.to_s) %>" value="<%= Rack::Utils.escape_html(item.send(field.to_sym).to_s) %>" />
+	</div>
+<% else %>
+	<div class="field">
+		<%= behavior.new(item).to_form_field %>
+	</div>
+<% end %>
