@@ -1,23 +1,23 @@
 <%
-
+# item = a turk task
 multi_items = false
 behavior_class = ""
 
-if item["type"].is_a?(Array)
+if item["field"]["type"].is_a?(Array)
 	multi_items = true
-	if item["type"].include?("#")
-		behavior_class = "#{item["type"][0].split("#")[1]}_behavior".camelize
+	if item["field"]["type"].include?("#")
+		behavior_class = "#{item["field"]["type"][0].split("#")[1]}_behavior".camelize
 		behavior_class = "MacroDeck::#{behavior_class}"
 	else
-		behavior_class = "#{item["type"][0]}_behavior".camelize
+		behavior_class = "#{item["field"]["type"][0]}_behavior".camelize
 		behavior_class = "MacroDeck::#{behavior_class}"
 	end
 else
-	if item["type"].include?("#")
-		behavior_class = "#{item["type"].split("#")[1]}_behavior".camelize
+	if item["field"]["type"].include?("#")
+		behavior_class = "#{item["field"]["type"].split("#")[1]}_behavior".camelize
 		behavior_class = "MacroDeck::#{behavior_class}"
 	else
-		behavior_class = "#{item["type"]}_behavior".camelize
+		behavior_class = "#{item["field"]["type"]}_behavior".camelize
 		behavior_class = "MacroDeck::#{behavior_class}"
 	end
 end
@@ -28,5 +28,5 @@ rescue NameError
 	behavior = nil
 end
 %>
-
-<%= erb :"_field.html", :locals => { :item => item, :field => item["name"], :behavior => behavior } %>
+<h3><%= item["title"] %></h3>
+<%= erb :"_field.html", :locals => { :item => item, :field => item["field"]["name"], :behavior => behavior } %>
