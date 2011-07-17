@@ -1,0 +1,32 @@
+<%
+
+multi_items = false
+behavior_class = ""
+
+if item["type"].is_a?(Array)
+	multi_items = true
+	if item["type"].include?("#")
+		behavior_class = "#{item["type"][0].split("#")[1]}_behavior".camelize
+		behavior_class = "MacroDeck::#{behavior_class}"
+	else
+		behavior_class = "#{item["type"][0]}_behavior".camelize
+		behavior_class = "MacroDeck::#{behavior_class}"
+	end
+else
+	if item["type"].include?("#")
+		behavior_class = "#{item["type"].split("#")[1]}_behavior".camelize
+		behavior_class = "MacroDeck::#{behavior_class}"
+	else
+		behavior_class = "#{item["type"]}_behavior".camelize
+		behavior_class = "MacroDeck::#{behavior_class}"
+	end
+end
+
+begin
+	behavior = behavior_class.constantize
+rescue NameError
+	behavior = nil
+end
+%>
+
+<%= erb :"_field.html", :locals => { :item => item, :field => item["name"], :behavior => behavior } %>
