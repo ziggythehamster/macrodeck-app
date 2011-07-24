@@ -273,10 +273,15 @@ module MacroDeck
 								end
 							end
 						end
-						if children_ids.length > 0
+						if !children_ids.nil? && children_ids.length > 0
 							docs = ::DataObject.database.get_bulk(children_ids)
 							if docs["rows"]
-								@children = docs["rows"].collect { |d| ::DataObject.create_from_database(d["doc"]) }
+								@children = docs["rows"].collect do |d|
+									if d["doc"]
+										::DataObject.create_from_database(d["doc"])
+									end
+								end
+								@children.compact!
 							end
 						else
 							@children = nil
