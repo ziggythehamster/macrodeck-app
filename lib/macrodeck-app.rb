@@ -91,6 +91,43 @@ module MacroDeck
 					@item_path = nil
 				end
 			end
+
+			# Updates item with params.
+			def update_item_properties(item, params)
+				item.class.properties.each do |f|
+					unless params[f.name.to_sym].nil?
+						# Simple types can just be set, but more complicated things
+						# will use the behavior system to parse them.
+						if params[f.name.to_sym].is_a?(Hash)
+							behavior_class = "#{f.to_s}_behavior".camelize
+							behavior_class = "MacroDeck::#{behavior_class}"
+
+							begin
+								behavior = behavior_class.constantize
+							rescue NameError
+								behavior = nil
+							end
+
+							if !behavior.nil? && !(item.class.introspections[f.to_sym][:internal] == true) && behavior.respond_to?(:parse_result)
+								item[f.name.to_sym] = behavior.parse_result(params[f.name.to_sym])
+							else
+								if params[f.name.to_sym] == ""
+									item[f.name.to_sym] = nil
+								else
+									item[f.name.to_sym] = params[f.name.to_sym]
+								end
+							end
+						else
+							if params[f.name.to_sym] == ""
+								item[f.name.to_sym] = nil
+							else
+								item[f.name.to_sym] = params[f.name.to_sym]
+							end
+						end
+					end
+				end
+				return item
+			end
 		end
 
 		get '/' do
@@ -130,32 +167,7 @@ module MacroDeck
 
 			if !@object.nil?
 				@item = @object.new
-
-				@object.properties.each do |f|
-					unless params[f.name.to_sym].nil?
-						# Simple types can just be set, but more complicated things
-						# will use the behavior system to parse them.
-						if params[f.name.to_sym].is_a?(Hash)
-							behavior_class = "#{f.to_s}_behavior".camelize
-							behavior_class = "MacroDeck::#{behavior_class}"
-
-							begin
-								behavior = behavior_class.constantize
-							rescue NameError
-								behavior = nil
-							end
-
-							if !behavior.nil? && !(@object.introspections[f.to_sym][:internal] == true) && behavior.respond_to?(:parse_result)
-								@item[f.name.to_sym] = behavior.parse_result(params[f.name.to_sym])
-							else
-								@item[f.name.to_sym] = params[f.name.to_sym] # current behavior
-							end
-						else
-							@item[f.name.to_sym] = params[f.name.to_sym]
-						end
-					end
-				end
-
+				update_item_properties(@item, params)
 				@item.created_by = "_system/MacroDeckApp"
 				@item.updated_by = "_system/MacroDeckApp"
 				@item.owned_by = "_system"
@@ -225,15 +237,7 @@ module MacroDeck
 			@object = get_platform_object(splat[-2])
 			if !@object.nil?
 				@item = @object.get(splat[-1])
-				@object.properties.each do |f|
-					unless params[f.name.to_sym].nil?
-						if @item[f.name.to_sym] == ""
-							@item[f.name.to_sym] = nil
-						else
-							@item[f.name.to_sym] = params[f.name.to_sym]
-						end
-					end
-				end
+				update_item_properties(@item, params)
 
 				# Set update properties, except the user isn't yet known.
 				@item.updated_by = "_system/MacroDeckApp"
