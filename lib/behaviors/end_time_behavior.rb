@@ -1,4 +1,4 @@
-require "time_behavior"
+require "behaviors/time_behavior"
 
 module MacroDeck
 	# End Time is the time that the event would end.
