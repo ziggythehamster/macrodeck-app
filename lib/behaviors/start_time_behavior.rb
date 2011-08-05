@@ -1,3 +1,5 @@
+require "time_behavior"
+
 module MacroDeck
 	# Start Time is the time that the event would start.
 	class StartTimeBehavior < TimeBehavior

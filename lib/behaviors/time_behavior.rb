@@ -1,4 +1,4 @@
-require "date"
+require "date_behavior"
 require "time"
 
 module MacroDeck
