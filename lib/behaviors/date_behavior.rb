@@ -31,7 +31,7 @@ module MacroDeck
 			def no_end_picker_field(name, hide, caption)
 				output  = "<input type=\"checkbox\" id=\"#{Rack::Utils.escape_html(name)}_noend\" name=\"#{Rack::Utils.escape_html(name)}[noend]\" value=\"1\""
 				output << "checked=\"checked\" " if hide
-				output << "/> #{Rack::Utils.escape_html(caption)}"
+				output << "/> #{Rack::Utils.escape_html(caption)}<br />"
 				return output
 			end
 
