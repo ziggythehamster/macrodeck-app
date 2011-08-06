@@ -16,12 +16,23 @@ module MacroDeck
 		end
 
 		def parse_result(result)
-			return parse_date_result(result)
+			if !result["noend"].nil?
+				return nil
+			else
+				return parse_date_result(result)
+			end
 		end
 
 		private
 			def parse_date_result(result)
 				return Date.parse(result["date"]).strftime("%F")
+			end
+
+			def no_end_picker_field(name, hide, caption)
+				output  = "<input type=\"checkbox\" id=\"#{Rack::Utils.escape_html(name)}_noend\" name=\"#{Rack::Utils.escape_html(name)}[noend]\" value=\"1\""
+				output << "checked=\"checked\" " if hide
+				output << "/> #{Rack::Utils.escape_html(caption)}"
+				return output
 			end
 
 			def date_picker_field(name, value)
