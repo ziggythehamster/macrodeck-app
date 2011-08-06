@@ -20,7 +20,11 @@ module MacroDeck
 		end
 
 		def parse_result(result)
-			return parse_time_result(result)
+			if !result["noend"].nil?
+				return nil
+			else
+				return parse_time_result(result)
+			end
 		end
 
 		private
