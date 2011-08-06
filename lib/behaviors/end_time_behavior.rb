@@ -4,7 +4,11 @@ module MacroDeck
 	# End Time is the time that the event would end.
 	class EndTimeBehavior < TimeBehavior
 		def to_html
-			return "&mdash; <abbr title=\"#{@data_object.end_time}\" class=\"dtend\">#{Time.parse(@data_object.end_time).getlocal.strftime("%l%P")}</abbr>"
+			if @data_object.end_time.nil?
+				return ""
+			else
+				return "&mdash; <abbr title=\"#{@data_object.end_time}\" class=\"dtend\">#{Time.parse(@data_object.end_time).getlocal.strftime("%l%P")}</abbr>"
+			end
 		end
 
 		def to_form_field
