@@ -11,9 +11,11 @@ module MacroDeck
 		def to_form_field
 			output = ""
 			output << "<label for=\"time_date\">Date</label>"
-			output << date_picker_field("time", @data_object.time.strftime("%F"))
+			output << date_picker_field("time", Time.new.strftime("%F")) if @data_object.time.nil?
+			output << date_picker_field("time", Time.parse(@data_object.time).strftime("%F")) unless @data_object.time.nil?
 			output << "<label for=\"time_time\">Time</label>"
-			output << time_picker_field("time", @data_object.time.strftime("%H:%M"))
+			output << time_picker_field("time", Time.new.strftime("%H:%M")) if @data_object.time.nil?
+			output << time_picker_field("time", Time.parse(@data_object.time).strftime("%H:%M")) unless @data_object.time.nil?
 			return output
 		end
 
