@@ -28,11 +28,10 @@ module MacroDeck
 				"<input type=\"hidden\" id=\"#{Rack::Utils.escape_html(name)}_date\" name=\"#{Rack::Utils.escape_html(name)}[date]\" value=\"#{Rack::Utils.escape_html(value)}\" />
 				<div id=\"#{Rack::Utils.escape_html(name)}_datepicker\"></div>
 				<script type=\"text/javascript\">
-				//<![CNAME[
+				//<![CDATA[
 					jQuery(document).ready(function() {
-						jQuery(\"##{Rack::Utils.escape_html(name)}_datepicker\")
-							.datepicker({ altField: \"##{Rack::Utils.escape_html(name)}_date\", altFormat: \"yy-mm-dd\", dateFormat: \"yy-mm-dd\" })
-							.datepicker(\"setDate\", \"#{Rack::Utils.escape_html(value)}\");
+						jQuery(\"##{Rack::Utils.escape_html(name)}_datepicker\").datepicker({ altField: \"##{Rack::Utils.escape_html(name)}_date\", altFormat: \"yy-mm-dd\", dateFormat: \"yy-mm-dd\" });
+						jQuery(\"##{Rack::Utils.escape_html(name)}_datepicker\").datepicker(\"setDate\", \"#{Rack::Utils.escape_html(value)}\");
 					});
 				//]]>
 				</script>"
