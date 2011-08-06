@@ -11,10 +11,10 @@ module MacroDeck
 			output = ""
 			output << "<label for=\"end_time_date\">Date</label>"
 			output << date_picker_field("end_time", Time.new.strftime("%F")) if @data_object.end_time.nil?
-			output << date_picker_field("end_time", Time.parse(@data_object.end_time).strftime("%F")) unless @data_object.end_time.nil?
+			output << date_picker_field("end_time", Time.parse(@data_object.end_time).getlocal.strftime("%F")) unless @data_object.end_time.nil?
 			output << "<label for=\"end_time_time\">Time</label>"
 			output << time_picker_field("end_time", Time.new.strftime("%H:%M")) if @data_object.end_time.nil?
-			output << time_picker_field("end_time", Time.parse(@data_object.end_time).strftime("%H:%M")) unless @data_object.end_time.nil?
+			output << time_picker_field("end_time", Time.parse(@data_object.end_time).getlocal.strftime("%H:%M")) unless @data_object.end_time.nil?
 			return output
 		end
 	end
