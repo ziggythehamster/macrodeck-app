@@ -10,7 +10,8 @@ module MacroDeck
 		def to_form_field
 			output = ""
 			output << "<label for=\"date_date\">Date</label>"
-			output << date_picker_field("date", @data_object.date)
+			output << date_picker_field("date", Time.new.strftime("%F")) if @data_object.date.nil?
+			output << date_picker_field("date", Date.parse(@data_object.date).strftime("%F")) unless @data_object.date.nil?
 			return output
 		end
 
