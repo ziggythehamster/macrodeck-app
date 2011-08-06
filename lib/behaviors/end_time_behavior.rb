@@ -13,8 +13,8 @@ module MacroDeck
 
 		def to_form_field
 			output = ""
-			output << no_end_picker_field("end_time", @data_object.end_time.nil?, "This event does not have an end time")
 			output << "<label for=\"end_time_date\">End Date</label>"
+			output << no_end_picker_field("end_time", @data_object.end_time.nil?, "This event does not have an end time")
 			output << date_picker_field("end_time", Time.new.strftime("%F")) if @data_object.end_time.nil?
 			output << date_picker_field("end_time", Time.parse(@data_object.end_time).getlocal.strftime("%F")) unless @data_object.end_time.nil?
 			output << "<label for=\"end_time_time\">End Time</label>"
