@@ -30,7 +30,9 @@ module MacroDeck
 				<script type=\"text/javascript\">
 				//<![CNAME[
 					jQuery(document).ready(function() {
-						jQuery(\"##{Rack::Utils.escape_html(name)}_datepicker\").datepicker({ altField: \"##{Rack::Utils.escape_html(name)}_date\", altFormat: \"yy-mm-dd\" });
+						jQuery(\"##{Rack::Utils.escape_html(name)}_datepicker\")
+							.datepicker({ altField: \"##{Rack::Utils.escape_html(name)}_date\", altFormat: \"yy-mm-dd\", dateFormat: \"yy-mm-dd\" })
+							.datepicker(\"setDate\", \"#{Rack::Utils.escape_html(value)}\");
 					});
 				//]]>
 				</script>"
