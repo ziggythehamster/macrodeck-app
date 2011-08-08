@@ -3,7 +3,13 @@ module MacroDeck
 	class EventTypeBehavior < Behavior
 		def to_form_field
 			out  = form_label(:event_type)
-			out << form_input(:event_type) # really needs to be a select.
+			out << "<select name=\"event_type\">"
+			out << "<option>Drink Special</option>"
+			out << "<option>Drink Special and Entertainment</option>"
+			out << "<option>Entertainment</option>"
+			out << "<option>Food and Drink Special</option>"
+			out << "<option>Food Special</option>"
+			out << "</select>"
 			return out
 		end
 
