@@ -108,7 +108,7 @@ module MacroDeck
 								behavior = nil
 							end
 
-							if !behavior.nil? && !(item.class.introspections[f.to_sym][:internal] == true) && behavior.respond_to?(:parse_result)
+							if !behavior.nil? && !(item.class.introspections[f.name.to_sym][:internal] == true) && behavior.respond_to?(:parse_result)
 								item[f.name.to_sym] = behavior.parse_result(params[f.name.to_sym])
 							else
 								if params[f.name.to_sym] == ""
