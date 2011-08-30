@@ -103,7 +103,7 @@ module MacroDeck
 							behavior_class = "MacroDeck::#{behavior_class}"
 
 							begin
-								behavior = behavior_class.constantize
+								behavior = behavior_class.constantize.new(item)
 							rescue NameError
 								behavior = nil
 							end
