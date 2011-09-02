@@ -25,7 +25,12 @@ module MacroDeck
 
 		# Render a question for the requested ID.
 		get '/:id' do
-
+			obj = DataObject.get(params[:id])
+			if obj.class.respond_to?(:turk_tasks) && !obj.class.turk_tasks.nil? && obj.class.turk_tasks.length > 0
+				# Render the question
+			else
+				erb :"turk_no_questions.html"
+			end
 		end
 	end
 end
