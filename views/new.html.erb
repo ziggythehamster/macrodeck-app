@@ -3,5 +3,5 @@
 
 <form action="<%= items_path(object, parent) %>" method="post">
 	<%= erb :"_form.html", :locals => { :object => object, :item => item } %>
-	<input type="submit" value="Create" />
+	<input type="submit" value="Create" class="btn btn-green big" />
 </form>

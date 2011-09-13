@@ -4,5 +4,5 @@
 <form action="<%= item_path(item) %>" method="post">
 	<input type="hidden" name="_method" value="put" />
 	<%= erb :"_form.html", :locals => { :object => object, :item => item } %>
-	<input type="submit" value="Update" />
+	<input type="submit" value="Update" class="btn btn-green big" />
 </form>
