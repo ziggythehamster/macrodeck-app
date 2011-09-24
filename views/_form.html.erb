@@ -1,6 +1,7 @@
 <%= erb :"_form_errors.html", :locals => { :item => item } %>
 
 <div class="field"><%= MacroDeck::TitleBehavior.new(item).to_form_field %></div>
+<div class="field"><%= MacroDeck::DescriptionBehavior.new(item).to_form_field %></div>
 
 <%
 
