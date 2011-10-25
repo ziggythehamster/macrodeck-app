@@ -9,6 +9,7 @@ module MacroDeck
 		attr_reader :layout
 		attr_reader :view_dir
 		attr_reader :path_prefix
+		attr_reader :turk_path_prefix
 
 		def initialize(yaml_path)
 			File.open(yaml_path) do |yml|
@@ -32,6 +33,12 @@ module MacroDeck
 					@path_prefix = @config[@environment.to_s]["path_prefix"]
 				else
 					@path_prefix = "/"
+				end
+
+				if @config[@environment.to_s]["turk_path_prefix"]
+					@turk_path_prefix = @config[@environment.to_s]["turk_path_prefix"]
+				else
+					@turk_path_prefix = "/turk/"
 				end
 			end
 		end
