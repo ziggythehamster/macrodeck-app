@@ -3,3 +3,4 @@ development:
   layout: layout.html
   view_dir: views
   path_prefix: /admin/
+  turk_path_prefix: /turk/
