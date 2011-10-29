@@ -26,11 +26,12 @@ module MacroDeck
 		# Render a question for the requested ID.
 		get '/:id' do
 			obj = DataObject.get(params[:id])
+
 			if obj.class.respond_to?(:turk_tasks) && !obj.class.turk_tasks.nil? && obj.class.turk_tasks.length > 0
 				# Render the question
-				erb :"turk_question.html", :locals => { :task => obj.class.turk_tasks[0] }
+				erb :"turk_question.html", :layout => self.configuration.layout.to_sym, :locals => { :task => obj.class.turk_tasks[0] }
 			else
-				erb :"turk_no_questions.html"
+				erb :"turk_no_questions.html", :layout => self.configuration.layout.to_sym
 			end
 		end
 	end
