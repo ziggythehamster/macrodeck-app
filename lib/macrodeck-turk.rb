@@ -25,7 +25,7 @@ module MacroDeck
 
 		# Render a question for the requested ID.
 		get '/:id' do
-			obj = DataObject.get(params[:id])
+			obj = ::DataObject.get(params[:id])
 
 			if obj.class.respond_to?(:turk_tasks) && !obj.class.turk_tasks.nil? && obj.class.turk_tasks.length > 0
 				# Render the question
