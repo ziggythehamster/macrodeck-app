@@ -1,4 +1,28 @@
 <h2>Question</h2>
+<h3><%= task.title %></h3>
+
+<!-- fields to show to the user -->
+<% if task.show_fields.length > 0 %>
+	<% task.show_fields.each do |field| %>
+		<% if field == "_attachment" %>
+			<p><em>Attachment would go here</em></p>
+		<% else %>
+			<p><%= h item.send(field.to_sym) %></p>
+		<% end %>
+	<% end %>
+<% end %>
+
+<!-- answers -->
+<%
+	begin
+		behavior = task.field_behavior.constantize
+	rescue NameError
+		behavior = nil
+	end
+%>
+
 <p>
-	<%= task %>
+	<code><%= h task.inspect %></code><br />
+	<code><%= h behavior.inspect %></code><br />
+	<code><%= h task.send(task.field["name"].to_sym) %></code>
 </p>
