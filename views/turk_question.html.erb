@@ -13,16 +13,9 @@
 <% end %>
 
 <!-- answers -->
-<%
-	begin
-		behavior = task.field_behavior.constantize
-	rescue NameError
-		behavior = nil
-	end
-%>
+<%= erb :"_turk_form.html", :locals => { :task => task } %>
 
 <p>
 	<code><%= h task.inspect %></code><br />
-	<code><%= h behavior.inspect %></code><br />
 	<code><%= h task.send(task.field["name"].to_sym) %></code>
 </p>
