@@ -1,32 +1,17 @@
 <%
-# item = a turk task
-multi_items = false
-behavior_class = ""
-
-if item["field"]["type"].is_a?(Array)
-	multi_items = true
-	if item["field"]["type"].include?("#")
-		behavior_class = "#{item["field"]["type"][0].split("#")[1]}_behavior".camelize
-		behavior_class = "MacroDeck::#{behavior_class}"
-	else
-		behavior_class = "#{item["field"]["type"][0]}_behavior".camelize
-		behavior_class = "MacroDeck::#{behavior_class}"
-	end
-else
-	if item["field"]["type"].include?("#")
-		behavior_class = "#{item["field"]["type"].split("#")[1]}_behavior".camelize
-		behavior_class = "MacroDeck::#{behavior_class}"
-	else
-		behavior_class = "#{item["field"]["type"]}_behavior".camelize
-		behavior_class = "MacroDeck::#{behavior_class}"
-	end
-end
-
 begin
-	behavior = behavior_class.constantize
+	behavior = task.field_behavior.constantize
 rescue NameError
 	behavior = nil
 end
 %>
-<h3><%= item["title"] %></h3>
-<%= erb :"_field.html", :locals => { :item => item, :field => item["field"]["name"], :behavior => behavior } %>
+<% if behavior.nil? %>
+	<div class="field">
+		<label for="<%= Rack::Utils.escape_html(task.field["name"].to_s) %>"><%= Rack::Utils.escape_html(task.class.human_attribute_name(task.field["name"].to_sym)) %></label>
+		<input type="text" name="<%= Rack::Utils.escape_html(task.field["name"].to_s) %>" value="<%= Rack::Utils.escape_html(task.send(task.field["name"].to_sym).to_s) %>" />
+	</div>
+<% else %>
+	<div class="field">
+		<%= behavior.new(task).to_form_field(task.field["name"]) %>
+	</div>
+<% end %>
