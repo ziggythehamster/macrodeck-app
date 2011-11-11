@@ -3,15 +3,24 @@ module MacroDeck
 	class DayOfWeekBehavior < Behavior
 		def to_form_field(name = :day_of_week)
 			out  = form_label(name)
-			out << "<select name=\"#{name.to_s}\">"
-			out << "<option value=\"0\">#{get_day_string(0)}</option>"
-			out << "<option value=\"1\">#{get_day_string(1)}</option>"
-			out << "<option value=\"2\">#{get_day_string(2)}</option>"
-			out << "<option value=\"3\">#{get_day_string(3)}</option>"
-			out << "<option value=\"4\">#{get_day_string(4)}</option>"
-			out << "<option value=\"5\">#{get_day_string(5)}</option>"
-			out << "<option value=\"6\">#{get_day_string(6)}</option>"
-			out << "</select>"
+			out << "<br />"
+
+			if @data_object.send(name.to_sym).is_a?(Array)
+				@data_object.send(name.to_sym).each do |val|
+					out << day_selector("#{name}[]", val)
+				end
+
+				# Build a blank input.
+				blank_input = day_selector("#{name}[]", -1)
+				blank_input << "<a href=\"#\" onclick=\"$(this).prev().remove(); $(this).next().remove(); $(this).remove();\">remove</a><br />"
+				blank_input.gsub!('"', "\\\\'") # for JavaScript.
+
+				# Add an add button.
+				out << "<a id=\"addbutton-#{Rack::Utils.escape_html(name.to_s)}\" href=\"#\" onclick=\"$(this).before('#{blank_input}');\">add item to list</a>\n"
+			else
+				out << day_selector(name, @data_object.send(name.to_sym))
+			end
+
 			return out
 		end
 
@@ -43,6 +52,28 @@ module MacroDeck
 				when 5 then "Friday"
 				when 6 then "Saturday"
 				else nil
+				end
+			end
+
+			def day_selector(name, value)
+				out = ""
+				out << "<select name=\"#{name.to_s}\">"
+				out << "<option value=\"0\"#{selected_if(0,value)}>#{get_day_string(0)}</option>"
+				out << "<option value=\"1\"#{selected_if(1,value)}>#{get_day_string(1)}</option>"
+				out << "<option value=\"2\"#{selected_if(2,value)}>#{get_day_string(2)}</option>"
+				out << "<option value=\"3\"#{selected_if(3,value)}>#{get_day_string(3)}</option>"
+				out << "<option value=\"4\"#{selected_if(4,value)}>#{get_day_string(4)}</option>"
+				out << "<option value=\"5\"#{selected_if(5,value)}>#{get_day_string(5)}</option>"
+				out << "<option value=\"6\"#{selected_if(6,value)}>#{get_day_string(6)}</option>"
+				out << "</select>"
+				return out
+			end
+
+			def selected_if(val1, val2)
+				if val1 == val2
+					' selected="selected"'
+				else
+					""
 				end
 			end
 	end
