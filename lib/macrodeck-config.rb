@@ -10,6 +10,8 @@ module MacroDeck
 		attr_reader :view_dir
 		attr_reader :path_prefix
 		attr_reader :turk_path_prefix
+		attr_reader :aws_access_key
+		attr_reader :aws_secret_access_key
 
 		def initialize(yaml_path)
 			File.open(yaml_path) do |yml|
@@ -39,6 +41,18 @@ module MacroDeck
 					@turk_path_prefix = @config[@environment.to_s]["turk_path_prefix"]
 				else
 					@turk_path_prefix = "/turk/"
+				end
+
+				if @config[@environment.to_s]["aws_access_key"]
+					@aws_access_key = @config[@environment.to_s]["aws_access_key"]
+				else
+					@aws_access_key = ""
+				end
+
+				if @config[@environment.to_s]["aws_secret_access_key"]
+					@aws_secret_access_key = @config[@environment.to_s]["aws_secret_access_key"]
+				else
+					@aws_secret_access_key = ""
 				end
 			end
 		end
