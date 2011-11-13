@@ -4,3 +4,5 @@ development:
   view_dir: views
   path_prefix: /admin/
   turk_path_prefix: /turk/
+  aws_access_key: ""
+  aws_secret_access_key: ""
