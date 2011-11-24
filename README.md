@@ -82,3 +82,17 @@ Ideas for bonuses
 * Track the workers, and for workers that consistently provide good answers, ramp up the
   bonus based on the number of correct answers they've given to us over time. Maybe range
   the bonus from 50% of the original HIT to 200% of the original HIT?
+
+Notification API
+----------------
+
+* [Notification Receptor API - The REST Transport][1]
+* MTurk uses a quasi-REST API for notifications.
+* You have to set the notification URI in the HIT Type.
+* EventTypes we might have to accept: `AssignmentSubmitted` (turk is done),
+  `HITReviewable` (can review/process a HIT).
+* [AWS Request Authentication][2] - maybe we can use RightAws to do this instead of
+  rolling our own.
+
+[1]: http://docs.amazonwebservices.com/AWSMechTurk/2008-08-02/AWSMturkAPI/index.html?ApiReference_NotificationReceptorAPI_RESTTransportArticle.html
+[2]: http://docs.amazonwebservices.com/AWSMechTurk/latest/AWSMechanicalTurkRequester/MakingRequests_RequestAuthenticationArticle.html
