@@ -92,7 +92,8 @@ Notification API
 * EventTypes we might have to accept: `AssignmentSubmitted` (turk is done),
   `HITReviewable` (can review/process a HIT).
 * [AWS Request Authentication][2] - maybe we can use RightAws to do this instead of
-  rolling our own.
+  rolling our own. [See also][3] from RTurk.
 
 [1]: http://docs.amazonwebservices.com/AWSMechTurk/2008-08-02/AWSMturkAPI/index.html?ApiReference_NotificationReceptorAPI_RESTTransportArticle.html
 [2]: http://docs.amazonwebservices.com/AWSMechTurk/latest/AWSMechanicalTurkRequester/MakingRequests_RequestAuthenticationArticle.html
+[3]: https://github.com/mdp/rturk/blob/master/lib/rturk/requester.rb
