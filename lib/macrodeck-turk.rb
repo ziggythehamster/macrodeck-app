@@ -22,6 +22,34 @@ module MacroDeck
 			alias_method :h, :escape_html
 		end
 
+		get '/notification_receptor' do
+			# TODO: Validate Signature parameter.
+
+			# Check if first event is present.
+			if params["Event.1.EventType"]
+				event_id = 1
+				events_to_process = true
+			else
+				events_to_process = false
+			end
+
+			# Loop through the events
+			while events_to_process
+				event_type = params["Event.#{event_id}.EventType"]
+				event_time = params["Event.#{event_id}.EventTime"]
+				hit_type = params["Event.#{event_id}.HITTypeId"]
+				hit_id = params["Event.#{event_id}.HITId"],
+				assignment_id = params["Event.#{event_id}.AssignmentId"]
+
+				# TODO: Process with these parameters.
+
+				if params["Event.#{event_id + 1}.EventType"]
+					event_id = event_id + 1
+				else
+					events_to_process = false
+				end
+			end
+		end
 
 		# Render a question for the requested ID.
 		get '/:id' do
