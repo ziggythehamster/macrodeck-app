@@ -10,6 +10,7 @@ $LOAD_PATH << File.join(File.dirname(__FILE__), "lib")
 require "rubygems"
 require "builder"
 require "sinatra"
+require "rturk"
 require "macrodeck-platform/init"
 require "macrodeck-app"
 require "macrodeck-turk"
