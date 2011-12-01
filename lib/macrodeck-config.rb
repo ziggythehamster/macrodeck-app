@@ -10,6 +10,7 @@ module MacroDeck
 		attr_reader :view_dir
 		attr_reader :path_prefix
 		attr_reader :turk_path_prefix
+		attr_reader :turk_sandbox
 		attr_reader :aws_access_key
 		attr_reader :aws_secret_access_key
 
@@ -41,6 +42,12 @@ module MacroDeck
 					@turk_path_prefix = @config[@environment.to_s]["turk_path_prefix"]
 				else
 					@turk_path_prefix = "/turk/"
+				end
+
+				if @config[@environment.to_s]["turk_sandbox"]
+					@turk_sandbox = @config[@environment.to_s]["turk_sandbox"]
+				else
+					@turk_sandbox = true
 				end
 
 				if @config[@environment.to_s]["aws_access_key"]
