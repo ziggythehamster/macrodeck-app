@@ -1,3 +1,9 @@
+gem "rturk"
+require "rturk"
+require "lib/macrodeck-config"
+
+cfg = MacroDeck::Config.new(File.join(File.dirname(__FILE__), "..", "..", "config", "macrodeck.yml"))
+
 namespace :macrodeck do
 	namespace :mturk do
 		desc "Creates HIT types for the app."
