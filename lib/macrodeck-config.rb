@@ -11,8 +11,10 @@ module MacroDeck
 		attr_reader :path_prefix
 		attr_reader :turk_path_prefix
 		attr_reader :turk_sandbox
-		attr_reader :answer_hit_type_id
-		attr_reader :verification_hit_type_id
+		attr_reader :turk_answer_hit_type_id
+		attr_reader :turk_answer_reward
+		attr_reader :turk_verify_hit_type_id
+		attr_reader :turk_verify_reward
 		attr_reader :aws_access_key
 		attr_reader :aws_secret_access_key
 
@@ -52,16 +54,28 @@ module MacroDeck
 					@turk_sandbox = true
 				end
 
-				if @config[@environment.to_s]["answer_hit_type_id"]
-					@answer_hit_type_id = @config[@environment.to_s]["answer_hit_type_id"]
+				if @config[@environment.to_s]["turk_answer_hit_type_id"]
+					@turk_answer_hit_type_id = @config[@environment.to_s]["turk_answer_hit_type_id"]
 				else
-					@answer_hit_type_id = nil
+					@turk_answer_hit_type_id = nil
 				end
 
-				if @config[@environment.to_s]["verification_hit_type_id"]
-					@verification_hit_type_id = @config[@environment.to_s]["verification_hit_type_id"]
+				if @config[@environment.to_s]["turk_answer_reward"]
+					@turk_answer_reward = @config[@environment.to_s]["turk_answer_reward"]
 				else
-					@verification_hit_type_id = nil
+					@turk_answer_reward = 0.0
+				end
+
+				if @config[@environment.to_s]["turk_verify_hit_type_id"]
+					@turk_verify_hit_type_id = @config[@environment.to_s]["turk_verify_hit_type_id"]
+				else
+					@turk_verify_hit_type_id = nil
+				end
+
+				if @config[@environment.to_s]["turk_verify_reward"]
+					@turk_verify_reward = @config[@environment.to_s]["turk_verify_reward"]
+				else
+					@turk_verify_reward = 0.0
 				end
 
 				if @config[@environment.to_s]["aws_access_key"]
