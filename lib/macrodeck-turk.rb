@@ -41,7 +41,15 @@ module MacroDeck
 				hit_id = params["Event.#{event_id}.HITId"],
 				assignment_id = params["Event.#{event_id}.AssignmentId"]
 
-				# TODO: Process with these parameters.
+				processor = MacroDeck::TurkEventProcessor.new({
+					:event_type => event_type,
+					:event_time => event_time,
+					:hit_type => hit_type,
+					:hit_id => hit_id,
+					:assignment_id => assignment_id,
+					:configuration => self.configuration
+				})
+				processor.process!
 
 				if params["Event.#{event_id + 1}.EventType"]
 					event_id = event_id + 1
