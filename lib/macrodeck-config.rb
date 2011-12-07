@@ -17,6 +17,7 @@ module MacroDeck
 		attr_reader :turk_verify_reward
 		attr_reader :aws_access_key
 		attr_reader :aws_secret_access_key
+		attr_reader :base_url
 
 		def initialize(yaml_path)
 			File.open(yaml_path) do |yml|
@@ -88,6 +89,12 @@ module MacroDeck
 					@aws_secret_access_key = @config[@environment.to_s]["aws_secret_access_key"]
 				else
 					@aws_secret_access_key = ""
+				end
+
+				if @config[@environment.to_s]["base_url"]
+					@base_url = @config[@environment.to_s]["base_url"].replace(/\/$/, "")
+				else
+					@base_url = "http://localhost:3000"
 				end
 			end
 
