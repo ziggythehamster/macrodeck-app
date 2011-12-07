@@ -11,3 +11,4 @@ development:
   turk_verify_reward: 0.25
   aws_access_key: ""
   aws_secret_access_key: ""
+  base_url: "http://localhost:3000/"
