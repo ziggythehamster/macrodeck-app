@@ -71,12 +71,19 @@ module MacroDeck
 						# Look up the HIT
 						@hit = RTurk::Hit.find(@hit_id)
 
+						# Mark HIT as reviewing.
+						@hit.set_as_reviewing!
+
 						# Parse the annotation
 						begin
 							annotation = JSON.parse(@hit.annotation)
 						rescue JSON::ParserError
 							annotation = {}
 						end
+
+						# Get the answer HIT
+						answer_hit = RTurk::Hit.find(annotation["answer_hit_id"])
+						answer_assignment = RTurk::Assignment.new(annotation["answer_assignment_id"])
 
 						ass_true = []
 						ass_false = []
@@ -93,16 +100,43 @@ module MacroDeck
 							end
 						end
 
-						# If true_count > false_count:
-						# 	Accept original assignment.
-						# 	Accept true answers.
-						# 	Reject false answers.
-						# 	Save the answer to the object.
-						# If false_count > true_count:
-						# 	Reject original assignment.
-						# 	Reject true answers.
-						# 	Accept false answers.
-						# 	Extend the original HIT to allow another answer.
+						# Check for more trues than falses.
+						if ass_true.length > ass_false.length
+							# Approve original assignment.
+							answer_assignment.approve!("Your answer was verified correct by other workers.")
+
+							# Accept true answers.
+							ass_true.each do |a|
+								a.approve!("Majority of workers agreed with your answer.")
+							end
+
+							# Reject false answers.
+							ass_false.each do |a|
+								a.reject!("Majority of workers disagreed with your answer.")
+							end
+
+							@hit.dispose!
+							answer_hit.dispose!
+
+							# TODO: Save the answer to the object.
+						else
+							# Reject original assignment.
+							answer_assignment.reject!("Your answer was verified as incorrect by other workers.")
+
+							# Reject true answers.
+							ass_true.each do |a|
+								a.reject!("Majority of workers disagreed with your answer.")
+							end
+
+							# Accept false answers.
+							ass_false.each do |a|
+								a.approve!("Majority of workers agreed with your answer.")
+							end
+
+							# Extend the original HIT and dispose of this HIT to allow another answer.
+							@hit.dispose!
+							answer_hit.extend!(:assignments => 1, :seconds => 604800)
+						end
 					else
 						puts "HIT Type ID #{@hit_type} not one of the configured HIT Types!"
 						return false
