@@ -63,7 +63,7 @@ module MacroDeck
 									h.assignments = 1
 									h.lifetime = 604800
 									h.note = { "item_id" => annotation["item_id"], "answer_hit_id" => @hit_id, "answer_assignment_id" => @assignment_id }.to_json
-									# TODO: set question up
+									h.question("#{@configuration.base_url}/turk/#{annotation["item_id"]}/verify/#{@hit_id}/")
 								end
 							end
 						end
