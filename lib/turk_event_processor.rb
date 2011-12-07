@@ -71,8 +71,28 @@ module MacroDeck
 						# Look up the HIT
 						@hit = RTurk::Hit.find(@hit_id)
 
-						# Get number of true answers.
-						# Get number of false answers.
+						# Parse the annotation
+						begin
+							annotation = JSON.parse(@hit.annotation)
+						rescue JSON::ParserError
+							annotation = {}
+						end
+
+						ass_true = []
+						ass_false = []
+
+						@hit.assignments.each do |assignment|
+							if !assignment.approved? && !assignment.rejected?
+								# Is answer true?
+								if assignment.answers['validation'].to_i == 1
+									ass_true << assignment
+								# Is answer false?
+								elsif assignment.answers['validation'].to_i == 0
+									ass_false << assignment
+								end
+							end
+						end
+
 						# If true_count > false_count:
 						# 	Accept original assignment.
 						# 	Accept true answers.
