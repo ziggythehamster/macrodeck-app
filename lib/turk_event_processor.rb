@@ -62,7 +62,7 @@ module MacroDeck
 									h.hit_type_id = @configuration.turk_verify_hit_type_id
 									h.assignments = 1
 									h.lifetime = 604800
-									h.note = { "item_id" => annotation["item_id"], "answer_hit_id" => @hit_id, "answer_assignment_id" => @assignment_id }.to_json
+									h.note = { "answer_hit_id" => @hit_id, "answer_assignment_id" => @assignment_id }.to_json
 									h.question("#{@configuration.base_url}/turk/#{annotation["item_id"]}/verify/#{@hit_id}/")
 								end
 							end
@@ -84,6 +84,13 @@ module MacroDeck
 						# Get the answer HIT
 						answer_hit = RTurk::Hit.find(annotation["answer_hit_id"])
 						answer_assignment = RTurk::Assignment.new(annotation["answer_assignment_id"])
+
+						# Parse the answer HIT's annotation
+						begin
+							answer_annotation = JSON.parse(answer_hit.annotation)
+						rescue JSON::ParserError
+							answer_annotation = {}
+						end
 
 						ass_true = []
 						ass_false = []
@@ -118,7 +125,26 @@ module MacroDeck
 							@hit.dispose!
 							answer_hit.dispose!
 
-							# TODO: Save the answer to the object.
+							resp_key = answer_annotation["turk_question"]
+							item = ::DataObject.get(answer_annotation["item_id"])
+							item.turk_responses ||= {}
+
+							# TODO: Look up the turk task and if there are prerequisites, properly
+							# set the root of the tree to the prerequisite values.
+
+							# Is answer an array?
+							if answer_assignment.answers.key?("answer[]")
+								item.turk_responses[resp_key] = answer_assignment.answers["answer[]"].split("|")
+								item.turk_responses[resp_key].each do |resp_val|
+									item.turk_responses["#{resp_key}=#{resp_val}"] = {}
+								end
+							else
+								item.turk_responses[resp_key] = answer_assignment.answers["answer"]
+								item.turk_responses["#{resp_key}="] = {}
+							end
+
+							# Save item.
+							item.save
 						else
 							# Reject original assignment.
 							answer_assignment.reject!("Your answer was verified as incorrect by other workers.")
