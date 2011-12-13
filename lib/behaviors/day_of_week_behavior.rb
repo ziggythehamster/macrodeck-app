@@ -1,12 +1,18 @@
 module MacroDeck
 	# Renders a drop down that has the days of the week.
 	class DayOfWeekBehavior < Behavior
-		def to_form_field(name = :day_of_week)
-			out  = form_label(name)
+		def to_form_field(field_name = :day_of_week, params = {})
+			if params[:name].nil?
+				name = field_name
+			else
+				name = params[:name]
+			end
+
+			out  = form_label(field_name, :name => name)
 			out << "<br />"
 
-			if @data_object.send(name.to_sym).is_a?(Array)
-				@data_object.send(name.to_sym).each do |val|
+			if @data_object.send(field_name.to_sym).is_a?(Array)
+				@data_object.send(field_name.to_sym).each do |val|
 					out << day_selector("#{name}[]", val)
 				end
 
@@ -18,7 +24,7 @@ module MacroDeck
 				# Add an add button.
 				out << "<a id=\"addbutton-#{Rack::Utils.escape_html(name.to_s)}\" href=\"#\" onclick=\"$(this).before('#{blank_input}');\">add item to list</a>\n"
 			else
-				out << day_selector(name, @data_object.send(name.to_sym))
+				out << day_selector(name, @data_object.send(field_name.to_sym))
 			end
 
 			return out
