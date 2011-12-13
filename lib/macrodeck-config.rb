@@ -92,7 +92,7 @@ module MacroDeck
 				end
 
 				if @config[@environment.to_s]["base_url"]
-					@base_url = @config[@environment.to_s]["base_url"].replace(/\/$/, "")
+					@base_url = @config[@environment.to_s]["base_url"].gsub(/\/$/, "")
 				else
 					@base_url = "http://localhost:3000"
 				end
