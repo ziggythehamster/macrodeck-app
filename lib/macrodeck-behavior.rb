@@ -57,11 +57,17 @@ module MacroDeck
 
 			# Function to generate a form label. Can probably be modified to accept a block,
 			# in which case we should include the input inside the label tag.
-			def form_label(field)
-				if @data_object.send(field.to_sym).is_a?(Array)
-					return "<label for=\"#{Rack::Utils.escape_html(field.to_s)}[]\">#{Rack::Utils.escape_html(@data_object.class.human_attribute_name(field.to_sym))}</label>"
+			def form_label(field, params = {})
+				if params[:name].nil?
+					field_name = field
 				else
-					return "<label for=\"#{Rack::Utils.escape_html(field.to_s)}\">#{Rack::Utils.escape_html(@data_object.class.human_attribute_name(field.to_sym))}</label>"
+					field_name = params[:name]
+				end
+
+				if @data_object.send(field.to_sym).is_a?(Array)
+					return "<label for=\"#{Rack::Utils.escape_html(field_name.to_s)}[]\">#{Rack::Utils.escape_html(@data_object.class.human_attribute_name(field.to_sym))}</label>"
+				else
+					return "<label for=\"#{Rack::Utils.escape_html(field_name.to_s)}\">#{Rack::Utils.escape_html(@data_object.class.human_attribute_name(field.to_sym))}</label>"
 				end
 			end
 	end
