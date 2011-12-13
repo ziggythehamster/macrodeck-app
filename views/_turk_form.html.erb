@@ -12,6 +12,6 @@ end
 	</div>
 <% else %>
 	<div class="field">
-		<%= behavior.new(task).to_form_field(task.field["name"]) %>
+		<%= behavior.new(task).to_form_field(task.field["name"], :name => "answer") %>
 	</div>
 <% end %>
