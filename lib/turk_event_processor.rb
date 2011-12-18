@@ -129,18 +129,27 @@ module MacroDeck
 							item = ::DataObject.get(answer_annotation["item_id"])
 							item.turk_responses ||= {}
 
-							# TODO: Look up the turk task and if there are prerequisites, properly
+							# Look up the turk task and if there are prerequisites, properly
 							# set the root of the tree to the prerequisite values.
+							prereqs = answer_annotation["prerequisites"]
+							root = item.turk_responses
+							prereqs.each do |p|
+								if p.include?("=")
+									root = root[p]
+								else
+									root = root["#{p}="]
+								end
+							end
 
 							# Is answer an array?
 							if answer_assignment.answers.key?("answer[]")
-								item.turk_responses[resp_key] = answer_assignment.answers["answer[]"].split("|")
-								item.turk_responses[resp_key].each do |resp_val|
-									item.turk_responses["#{resp_key}=#{resp_val}"] = {}
+								root[resp_key] = answer_assignment.answers["answer[]"].split("|")
+								root[resp_key].each do |resp_val|
+									root["#{resp_key}=#{resp_val}"] = {}
 								end
 							else
-								item.turk_responses[resp_key] = answer_assignment.answers["answer"]
-								item.turk_responses["#{resp_key}="] = {}
+								root[resp_key] = answer_assignment.answers["answer"]
+								root["#{resp_key}="] = {}
 							end
 
 							# Save item.
