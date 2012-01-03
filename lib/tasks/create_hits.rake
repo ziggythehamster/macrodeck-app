@@ -20,7 +20,7 @@ namespace :macrodeck do
 				obj.pending_turk_tasks.each do |tt|
 					if tt.prerequisites.length == 0
 						puts "- #{tt.title}"
-						hit = RTurk::Hit.create |h|
+						hit = RTurk::Hit.create do |h|
 							h.hit_type_id = cfg.turk_answer_hit_type_id
 							h.assignments = 1
 							h.lifetime = 604800
