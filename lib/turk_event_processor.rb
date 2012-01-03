@@ -60,7 +60,7 @@ module MacroDeck
 								# Create verification HIT.
 								verify_hit = RTurk::Hit.create do |h|
 									h.hit_type_id = @configuration.turk_verify_hit_type_id
-									h.assignments = 1
+									h.assignments = 3
 									h.lifetime = 604800
 									h.note = { "answer_hit_id" => @hit_id, "answer_assignment_id" => @assignment_id }.to_json
 									h.question("#{@configuration.base_url}/turk/#{annotation["item_id"]}/verify/#{@hit_id}/")
