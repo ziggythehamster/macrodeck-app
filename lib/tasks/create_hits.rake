@@ -25,7 +25,7 @@ namespace :macrodeck do
 							h.assignments = 1
 							h.lifetime = 604800
 							h.note = { "item_id" => obj.id }.to_json
-							h.question("#{cfg.base_url}/turk/#{obj.id}/")
+							h.question("#{cfg.base_url}/turk/#{obj.id}")
 						end
 						puts hit.inspect
 					end
