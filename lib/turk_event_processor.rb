@@ -125,15 +125,15 @@ module MacroDeck
 							@hit.dispose!
 							answer_hit.dispose!
 
-							resp_key = answer_annotation["turk_question"]
+							path_components = answer_annotation["path"].split("/")[1..-1]
+							resp_key = path_components.last
 							item = ::DataObject.get(answer_annotation["item_id"])
 							item.turk_responses ||= {}
 
 							# Look up the turk task and if there are prerequisites, properly
 							# set the root of the tree to the prerequisite values.
-							prereqs = answer_annotation["prerequisites"]
 							root = item.turk_responses
-							prereqs.each do |p|
+							path_components[0..-2].each do |p|
 								if p.include?("=")
 									root = root[p]
 								else
@@ -154,6 +154,8 @@ module MacroDeck
 
 							# Save item.
 							item.save
+
+							# TODO: Create new answer HIT.
 						else
 							# Reject original assignment.
 							answer_assignment.reject!("Your answer was verified as incorrect by other workers.")
