@@ -19,12 +19,16 @@ namespace :macrodeck do
 				puts "#{obj.id}:"
 				obj.pending_turk_tasks.each do |tt|
 					if tt.prerequisites.length == 0
-						puts "- #{tt.title}"
+						puts "- #{tt.id}: #{tt.title}"
 						hit = RTurk::Hit.create do |h|
 							h.hit_type_id = cfg.turk_answer_hit_type_id
 							h.assignments = 1
 							h.lifetime = 604800
-							h.note = { "item_id" => obj.id }.to_json
+							if tt.field["type"].is_a?(Array)
+								h.note = { "item_id" => obj.id, "path" => "/" + tt.id, "multiple_answer" => true }.to_json
+							else
+								h.note = { "item_id" => obj.id, "path" => "/" + tt.id, "multiple_answer" => false }.to_json
+							end
 							h.question("#{cfg.base_url}/turk/#{obj.id}")
 						end
 						puts hit.inspect
