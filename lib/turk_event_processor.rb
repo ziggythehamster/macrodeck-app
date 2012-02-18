@@ -156,6 +156,112 @@ module MacroDeck
 							item.save
 
 							# TODO: Create new answer HIT.
+							# Does this answer have a parent? (path length != 1)
+							# Yes -> Is parent an array?
+							#        Yes -> Iterate array, check if each value is answered. Answered?
+							#               Yes -> Skip. If all skipped, proceed to creating HIT that is a
+							#                      child of this answer.
+							#               No  -> Create HIT (will be a sibling of this answer), exit loop
+							#        No  -> Create a HIT that is a child of this answer, taking into account if
+							#               this answer is an array.
+							# No  -> Create a HIT that is a child of this answer, taking into account if this
+							#        answer is an array.
+
+							# Check if this answer has a parent
+							if path_components.length == 1
+								# It doesn't, is this answer an array?
+								if answer_assignment.answers.key?("answer[]")
+									# Get next task (this is an array).
+									item.class.turk_tasks.each do |tt|
+										resp = { resp_key => [ item.turk_responses[resp_key].first ] }
+										path = "/#{resp_key}=#{item.turk_responses[resp_key].first}/#{tt.id}"
+
+										if tt.prerequisites_met?(resp)
+											self.create_hit({
+												"item_id" => item.id,
+												"path" => path,
+												"multiple_answer" => tt.field["type"].is_a?(Array)
+											})
+										end
+									end
+								else
+									# Get next task (this is not an array).
+									item.class.turk_tasks.each do |tt|
+										if tt.prerequisites_met?(item.turk_responses)
+											path = "/#{resp_key}/#{tt.id}"
+											self.create_hit({
+												"item_id" => item.id,
+												"path" => path,
+												"multiple_answer" => tt.field["type"].is_a?(Array)
+											})
+										end
+									end
+								end
+							else
+								# Parent an array? (Check path up until second-to-last component
+								# to see if it has an =)
+								if path_components[-2].include?("=")
+									# Parent is an array
+									parent = item.turk_responses # which is wrong, we will eventually have a valid parent.
+									# -3 is intentional.
+									path_components[0..-3].each do |p|
+										if p.include?("=")
+											parent = parent[p]
+										else
+											parent = parent["#{p}="]
+										end
+									end
+									# here's where we do -2
+									parent_answers = parent[path_components[-2].split("=")[0]]
+
+									make_child = true
+
+									# Now, let's iterate the answers.
+									parent_answers.each do |answer|
+										# Check if answered
+										if !parent.key?("#{path_components[-2].split("=")[0]}=#{answer}") && !parent["#{path_components[-2].split("=")[0]}=#{answer}"].key?(resp_key)
+											make_child = false
+
+											path = "/#{path_components[0..-3].join("/")}/#{path_components[-2].split("=")[0]}=#{answer}/#{resp_key}")
+
+											self.create_hit({
+												"item_id" => item.id,
+												"path" => path,
+												"multiple_answer" => item.class.turk_task_by_id(path_components[-2].split("=")[0]).field["type"].is_a?(Array)
+											})
+
+											break
+										end
+									end
+
+									# Make the child if needed.
+									if make_child
+										item.class.turk_tasks.each do |tt|
+											if tt.prerequisites_met?(item.turk_responses) && !tt.answered?(item.turk_responses)
+												path = "/#{path_components.join("/")}/#{tt.id}"
+
+												self.create_hit({
+													"item_id" => item.id,
+													"path" => path,
+													"multiple_answer" => tt.field["type"].is_a?(Array)
+												})
+											end
+										end
+									end
+								else
+									# Parent is not an array
+									item.class.turk_tasks.each do |tt|
+										if tt.prerequisites_met?(item.turk_responses)
+											path = "#{answer_annotation["path"]}/#{tt.id}"
+											self.create_hit({
+												"item_id" => item.id,
+												"path" => path,
+												"multiple_answer" => tt.field["type"].is_a?(Array)
+											})
+										end
+									end
+								end
+							end
 						else
 							# Reject original assignment.
 							answer_assignment.reject!("Your answer was verified as incorrect by other workers.")
@@ -179,6 +285,21 @@ module MacroDeck
 						return false
 					end
 				end
+			end
+
+			# Common method that creates a HIT during processing.
+			# Not meant to be called directly.
+			# params accepted:
+			# item_id, path, multiple_answer
+			def create_hit(params = {})
+				hit = RTurk::Hit.create do |h|
+					h.hit_type_id = @configuration.turk_answer_hit_type_id
+					h.assignments = 1
+					h.lifetime = 604800
+					h.note = { "item_id" => params["item_id"], "path" => params["path"], "multiple_answer" => params["multiple_answer"] }.to_json
+					h.question("#{@configuration.base_url}/turk/#{params["item_id"]}")
+				end
+				return hit
 			end
 	end
 end
