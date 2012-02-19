@@ -155,7 +155,8 @@ module MacroDeck
 							# Save item.
 							item.save
 
-							# TODO: Create new answer HIT.
+							puts "Creating new answer HIT..."
+
 							# Does this answer have a parent? (path length != 1)
 							# Yes -> Is parent an array?
 							#        Yes -> Iterate array, check if each value is answered. Answered?
@@ -169,10 +170,16 @@ module MacroDeck
 
 							# Check if this answer has a parent
 							if path_components.length == 1
+								puts "Answer does not have a parent."
+
 								# It doesn't, is this answer an array?
 								if answer_assignment.answers.key?("answer[]")
+									puts "Answer is an array."
+
 									# Get next task (this is an array).
 									item.class.turk_tasks.each do |tt|
+										puts "Checking if #{tt.id} is answered/answerable..."
+
 										resp = { resp_key => [ item.turk_responses[resp_key].first ] }
 										path = "/#{resp_key}=#{item.turk_responses[resp_key].first}/#{tt.id}"
 
@@ -185,8 +192,12 @@ module MacroDeck
 										end
 									end
 								else
+									puts "Answer is not an array."
+
 									# Get next task (this is not an array).
 									item.class.turk_tasks.each do |tt|
+										puts "Checking if #{tt.id} is answered/answerable..."
+
 										if tt.prerequisites_met?(item.turk_responses) && !tt.answered?(item.turk_responses)
 											path = "/#{resp_key}/#{tt.id}"
 											self.create_hit({
@@ -198,9 +209,13 @@ module MacroDeck
 									end
 								end
 							else
+								puts "Answer has a parent."
+
 								# Parent an array? (Check path up until second-to-last component
 								# to see if it has an =)
 								if path_components[-2].include?("=")
+									puts "Parent is an array."
+
 									# Parent is an array
 									parent = item.turk_responses # which is wrong, we will eventually have a valid parent.
 									# -3 is intentional.
@@ -218,8 +233,12 @@ module MacroDeck
 
 									# Now, let's iterate the answers.
 									parent_answers.each do |answer|
+										puts "Checking if answer #{answer} is answered..."
+
 										# Check if answered
 										if !parent.key?("#{path_components[-2].split("=")[0]}=#{answer}") && !parent["#{path_components[-2].split("=")[0]}=#{answer}"].key?(resp_key)
+											puts "Nope! (Chuck Testa.)"
+
 											make_child = false
 
 											path = "/#{path_components[0..-3].join("/")}/#{path_components[-2].split("=")[0]}=#{answer}/#{resp_key}")
@@ -236,7 +255,11 @@ module MacroDeck
 
 									# Make the child if needed.
 									if make_child
+										puts "All answers answered - making child."
+
 										item.class.turk_tasks.each do |tt|
+											puts "Checking if #{tt.id} is answered/answerable..."
+
 											if tt.prerequisites_met?(item.turk_responses) && !tt.answered?(item.turk_responses)
 												path = "/#{path_components.join("/")}/#{tt.id}"
 
@@ -249,8 +272,11 @@ module MacroDeck
 										end
 									end
 								else
+									puts "Parent is not an array."
+
 									# Parent is not an array
 									item.class.turk_tasks.each do |tt|
+										puts "Checking if #{tt.id} is answered/answerable..."
 										if tt.prerequisites_met?(item.turk_responses) !tt.answered?(item.turk_responses)
 											path = "#{answer_annotation["path"]}/#{tt.id}"
 											self.create_hit({
@@ -292,6 +318,8 @@ module MacroDeck
 			# params accepted:
 			# item_id, path, multiple_answer
 			def create_hit(params = {})
+				puts "Creating HIT. ItemID=#{params["item_id"]} Path=#{params["path"]} MultipleAnswer=#{params["multiple_answer"].to_s}"
+
 				hit = RTurk::Hit.create do |h|
 					h.hit_type_id = @configuration.turk_answer_hit_type_id
 					h.assignments = 1
