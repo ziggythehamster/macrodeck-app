@@ -176,7 +176,7 @@ module MacroDeck
 										resp = { resp_key => [ item.turk_responses[resp_key].first ] }
 										path = "/#{resp_key}=#{item.turk_responses[resp_key].first}/#{tt.id}"
 
-										if tt.prerequisites_met?(resp)
+										if tt.prerequisites_met?(resp) && !tt.answered?(resp)
 											self.create_hit({
 												"item_id" => item.id,
 												"path" => path,
@@ -187,7 +187,7 @@ module MacroDeck
 								else
 									# Get next task (this is not an array).
 									item.class.turk_tasks.each do |tt|
-										if tt.prerequisites_met?(item.turk_responses)
+										if tt.prerequisites_met?(item.turk_responses) && !tt.answered?(item.turk_responses)
 											path = "/#{resp_key}/#{tt.id}"
 											self.create_hit({
 												"item_id" => item.id,
@@ -251,7 +251,7 @@ module MacroDeck
 								else
 									# Parent is not an array
 									item.class.turk_tasks.each do |tt|
-										if tt.prerequisites_met?(item.turk_responses)
+										if tt.prerequisites_met?(item.turk_responses) !tt.answered?(item.turk_responses)
 											path = "#{answer_annotation["path"]}/#{tt.id}"
 											self.create_hit({
 												"item_id" => item.id,
