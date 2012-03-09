@@ -60,7 +60,7 @@ module MacroDeck
 		end
 
 		# Render a question for the requested ID.
-		get '/:id' do
+		get '/:id/?' do
 			obj = ::DataObject.get(params[:id])
 
 			if obj.class.respond_to?(:turk_tasks) && !obj.class.turk_tasks.nil? && obj.class.turk_tasks.length > 0
@@ -71,6 +71,44 @@ module MacroDeck
 					task = tt if task.nil? && tt.prerequisites_met?(answers) && !tt.answered?(answers)
 				end
 				erb :"turk_question.html", :layout => self.configuration.layout.to_sym, :locals => { :task => task, :item => obj }
+			else
+				erb :"turk_no_questions.html", :layout => self.configuration.layout.to_sym
+			end
+		end
+
+		# Render verification for a question.
+		get '/:id/verify/:answer_hit_id/?' do
+			obj = ::DataObject.get(params[:id])
+
+			if obj.class.respond_to?(:turk_tasks) && !obj.class.turk_tasks.nil? && obj.class.turk_tasks.length > 0
+				# TODO:
+				# Get the active turk task / question.
+
+				# Get the HIT that we're currently working on.
+				hit = RTurk::Hit.find(params[:hitId])
+				begin
+					hit_annotation = JSON.parse(hit.annotation)
+				rescue
+					hit_annotation = {}
+				end
+
+				# Get the answer HIT.
+				answer_hit = RTurk::Hit.find(params[:answer_hit_id])
+				begin
+					answer_annotation = JSON.parse(answer_hit.annotation)
+				rescue
+					answer_annotation = {}
+				end
+
+				# Get the answer assignment from the HIT we're currently working on.
+				answer_assignment = answer_hit.assignments.select do |assignment|
+					assignment.id == hit_annotation["answer_assignment_id"]
+				end.first
+
+				# Get the answer from the HIT.
+
+				# Present user with a form to agree or disagree.
+				# Submit back to MTurk
 			else
 				erb :"turk_no_questions.html", :layout => self.configuration.layout.to_sym
 			end
