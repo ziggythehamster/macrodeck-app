@@ -83,7 +83,9 @@ module MacroDeck
 
 						# Get the answer HIT
 						answer_hit = RTurk::Hit.find(annotation["answer_hit_id"])
-						answer_assignment = RTurk::Assignment.new(annotation["answer_assignment_id"])
+						answer_assignment = answer_hit.assignments.select do |assignment|
+							assignment.id == annotation["answer_assignment_id"]
+						end.first
 
 						# Parse the answer HIT's annotation
 						begin
