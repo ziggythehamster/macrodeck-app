@@ -116,7 +116,7 @@ module MacroDeck
 					answer = answer_assignment.answers["answer"]
 				end
 
-				erb :"turk_verify.html", :layout => self.configuration.layout.to_sym, :locals => { :answer => answer, :task => task, :item => obj } 
+				erb :"turk_validation.html", :layout => self.configuration.layout.to_sym, :locals => { :answer => answer, :task => task, :item => obj } 
 			else
 				erb :"turk_no_questions.html", :layout => self.configuration.layout.to_sym
 			end
