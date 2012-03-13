@@ -81,9 +81,6 @@ module MacroDeck
 			obj = ::DataObject.get(params[:id])
 
 			if obj.class.respond_to?(:turk_tasks) && !obj.class.turk_tasks.nil? && obj.class.turk_tasks.length > 0
-				# TODO:
-				# Get the active turk task / question.
-
 				# Get the HIT that we're currently working on.
 				hit = RTurk::Hit.find(params[:hitId])
 				begin
@@ -100,15 +97,26 @@ module MacroDeck
 					answer_annotation = {}
 				end
 
+				# Get the turk task for the answer.
+				task_id = answer_annotation["path"].split("/").last
+				task_id = task_id.split("=")[0] if task_id.include("=")
+				task = obj.class.turk_task_by_id(task_id)
+
+				# TODO: Traverse the path and the answer tree to get the $$Whatever$$ to replace in the task title.
+
 				# Get the answer assignment from the HIT we're currently working on.
 				answer_assignment = answer_hit.assignments.select do |assignment|
 					assignment.id == hit_annotation["answer_assignment_id"]
 				end.first
 
 				# Get the answer from the HIT.
+				if answer_assignment.answers.key?("answer[]")
+					answer = answer_assignment.answers["answer[]"].split("|")
+				else
+					answer = answer_assignment.answers["answer"]
+				end
 
-				# Present user with a form to agree or disagree.
-				# Submit back to MTurk
+				erb :"turk_verify.html", :layout => self.configuration.layout.to_sym, :locals => { :answer => answer, :task => task, :item => obj } 
 			else
 				erb :"turk_no_questions.html", :layout => self.configuration.layout.to_sym
 			end
