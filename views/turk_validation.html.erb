@@ -1,0 +1,41 @@
+<h2>Validation</h2>
+
+<h3><%= task.title %></h3>
+
+<!-- fields to show to the user -->
+<% if task.show_fields.length > 0 %>
+	<% task.show_fields.each do |field| %>
+		<% if field == "_attachment" %>
+			<p><em>Attachment would go here</em></p>
+		<% else %>
+			<p><%= h item.send(field.to_sym) %></p>
+		<% end %>
+	<% end %>
+<% end %>
+
+<p>
+	The previous worker provided the following answer:
+</p>
+
+<% if answer.is_a?(Array) %>
+	<ul>
+		<% answer.each do |a| %>
+			<!-- TODO: Use the field type to use the proper behavior -->
+			<li><%= Rack::Utils.escape_html(a) %></li>
+		<% end %>
+	</ul>
+<% else %>
+	<!-- TODO: Use the field type to use the proper behavior -->
+	<p><%= Rack::Utils.escape_html(answer) %></p>
+<% end %>
+
+<h3>Does this answer accurately answer the question?</h3>
+
+<div class="field">
+	<input type="radio" name="validation" value="1" id="validation_true" />
+	<label for="validation_true">Yes</label>
+</div>
+<div class="field">
+	<input type="radio" name="validation" value="0" id="validation_false" />
+	<label for="validation_false">No</label>
+</div>
