@@ -70,7 +70,7 @@ module MacroDeck
 				obj.class.turk_tasks.each do |tt|
 					task = tt if task.nil? && tt.prerequisites_met?(answers) && !tt.answered?(answers)
 				end
-				erb :"turk_question.html", :layout => self.configuration.layout.to_sym, :locals => { :task => task, :item => obj }
+				erb :"turk_question.html", :layout => self.configuration.layout.to_sym, :locals => { :task => task, :item => obj, :assignment_id => params[:assignmentId] }
 			else
 				erb :"turk_no_questions.html", :layout => self.configuration.layout.to_sym
 			end
@@ -116,7 +116,7 @@ module MacroDeck
 					answer = answer_assignment.answers["answer"]
 				end
 
-				erb :"turk_validation.html", :layout => self.configuration.layout.to_sym, :locals => { :answer => answer, :task => task, :item => obj } 
+				erb :"turk_validation.html", :layout => self.configuration.layout.to_sym, :locals => { :answer => answer, :task => task, :item => obj, :assignment_id => params[:assignmentId] } 
 			else
 				erb :"turk_no_questions.html", :layout => self.configuration.layout.to_sym
 			end
