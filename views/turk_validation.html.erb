@@ -31,11 +31,22 @@
 
 <h3>Does this answer accurately answer the question?</h3>
 
-<div class="field">
-	<input type="radio" name="validation" value="1" id="validation_true" />
-	<label for="validation_true">Yes</label>
-</div>
-<div class="field">
-	<input type="radio" name="validation" value="0" id="validation_false" />
-	<label for="validation_false">No</label>
-</div>
+<form action="<%= RTurk.sandbox? ? "https://workersandbox.mturk.com/mturk/externalSubmit" : "https://www.mturk.com/mturk/externalSubmit" %>" method="POST">
+
+	<input type="hidden" name="assignmentId" value="<%= Rack::Utils.escape_html(assignment_id) %>" />
+
+	<div class="field">
+		<input type="radio" name="validation" value="1" id="validation_true" />
+		<label for="validation_true">Yes</label>
+	</div>
+	<div class="field">
+		<input type="radio" name="validation" value="0" id="validation_false" />
+		<label for="validation_false">No</label>
+	</div>
+
+	<% if assignment_id != "ASSIGNMENT_ID_NOT_AVAILABLE" %>
+		<div class="actions">
+			<input type="submit" value="Validate" />
+		</div>
+	<% end %>
+</form>
