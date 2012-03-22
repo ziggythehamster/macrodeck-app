@@ -249,7 +249,7 @@ module MacroDeck
 											self.create_hit({
 												"item_id" => item.id,
 												"path" => path,
-												"multiple_answer" => item.class.turk_task_by_id(path_components[-2].split("=")[0]).field["type"].is_a?(Array)
+												"multiple_answer" => item.class.turk_task_by_id(parent_key).field["type"].is_a?(Array)
 											})
 
 											break
@@ -280,7 +280,7 @@ module MacroDeck
 									# Parent is not an array
 									item.class.turk_tasks.each do |tt|
 										puts "Checking if #{tt.id} is answered/answerable..."
-										if tt.prerequisites_met?(item.turk_responses) !tt.answered?(item.turk_responses)
+										if tt.prerequisites_met?(item.turk_responses) && !tt.answered?(item.turk_responses)
 											path = "#{answer_annotation["path"]}/#{tt.id}"
 											self.create_hit({
 												"item_id" => item.id,
