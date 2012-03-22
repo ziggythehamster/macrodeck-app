@@ -229,7 +229,8 @@ module MacroDeck
 										end
 									end
 									# here's where we do -2
-									parent_answers = parent[path_components[-2].split("=")[0]]
+									parent_key = path_components[-2].split("=")[0]
+									parent_answers = parent[parent_key]
 
 									make_child = true
 
@@ -238,12 +239,12 @@ module MacroDeck
 										puts "Checking if answer #{answer} is answered..."
 
 										# Check if answered
-										if !parent.key?("#{path_components[-2].split("=")[0]}=#{answer}") && !parent["#{path_components[-2].split("=")[0]}=#{answer}"].key?(resp_key)
+										if !parent.key?("#{parent_key}=#{answer}") && !parent["#{parent_key}=#{answer}"].key?(resp_key)
 											puts "Nope! (Chuck Testa.)"
 
 											make_child = false
 
-											path = "/#{path_components[0..-3].join("/")}/#{path_components[-2].split("=")[0]}=#{answer}/#{resp_key}")
+											path = "/#{path_components[0..-3].join("/")}/#{parent_key}=#{answer}/#{resp_key}"
 
 											self.create_hit({
 												"item_id" => item.id,
