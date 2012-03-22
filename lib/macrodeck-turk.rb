@@ -10,6 +10,8 @@ require 'sinatra/base'
 require 'active_support' # For the inflector.
 require 'uuidtools'
 require 'erb'
+require "turk_signer"
+require "turk_event_processor"
 
 module MacroDeck
 	class Turk < Sinatra::Base
@@ -23,13 +25,20 @@ module MacroDeck
 		end
 
 		get '/notification_receptor' do
-			# TODO: Validate Signature parameter.
+			# Validate Signature parameter.
+			correct_signature = TurkSigner.sign(self.configuration.aws_secret_access_key, "AWSMechanicalTurkRequesterNotification", "Notify", params["Timestamp"])
+
+			if params["Signature"] != correct_signature
+				puts "[MTurk Notification Receptor] SIGNATURE MISMATCH. EXPECTED #{correct_signature}, GOT #{params["Signature"]}. Returning 403 Forbidden to client."
+				halt 403
+			end
 
 			# Check if first event is present.
 			if params["Event.1.EventType"]
 				event_id = 1
 				events_to_process = true
 			else
+				puts "[MTurk Notification Receptor] No events to process."
 				events_to_process = false
 			end
 
@@ -41,6 +50,7 @@ module MacroDeck
 				hit_id = params["Event.#{event_id}.HITId"],
 				assignment_id = params["Event.#{event_id}.AssignmentId"]
 
+				puts "[MTurk Notification Receptor] Processing event type #{event_type} for HIT ID #{hit_id}..."
 				processor = MacroDeck::TurkEventProcessor.new({
 					:event_type => event_type,
 					:event_time => event_time,
@@ -54,6 +64,7 @@ module MacroDeck
 				if params["Event.#{event_id + 1}.EventType"]
 					event_id = event_id + 1
 				else
+					puts "[MTurk Notification Receptor] No more events to process."
 					events_to_process = false
 				end
 			end
