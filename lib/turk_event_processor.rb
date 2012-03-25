@@ -16,6 +16,7 @@ module MacroDeck
 				when "AssignmentSubmitted" then :assignment_submitted
 				when "HITReviewable" then :hit_reviewable
 				when "HITExpired" then :hit_expired
+				when "Ping" then :ping
 				else nil
 			end
 
@@ -41,6 +42,8 @@ module MacroDeck
 				if !@hit_id.nil?
 					# Check which HIT type we're checking for here.
 					if @hit_type == @configuration.turk_answer_hit_type_id
+						puts "[MacroDeck::TurkEventProcessor] HITReviewable - Detected Answer HIT"
+
 						# Look up the HIT
 						@hit = RTurk::Hit.find(@hit_id)
 
@@ -57,6 +60,8 @@ module MacroDeck
 						# Get answers in need of review.
 						@hit.assignments.each do |assignment|
 							if !assignment.approved? && !assignment.rejected?
+								puts "[MacroDeck::TurkEventProcessor] HITReviewable - Creating verification HIT..."
+
 								# Create verification HIT.
 								verify_hit = RTurk::Hit.create do |h|
 									h.hit_type_id = @configuration.turk_verify_hit_type_id
@@ -68,6 +73,8 @@ module MacroDeck
 							end
 						end
 					elsif @hit_type == @configuration.turk_verify_hit_type_id
+						puts "[MacroDeck::TurkEventProcessor] HITReviewable - Detected Verification HIT"
+
 						# Look up the HIT
 						@hit = RTurk::Hit.find(@hit_id)
 
