@@ -47,7 +47,7 @@ module MacroDeck
 				event_type = params["Event.#{event_id}.EventType"]
 				event_time = params["Event.#{event_id}.EventTime"]
 				hit_type = params["Event.#{event_id}.HITTypeId"]
-				hit_id = params["Event.#{event_id}.HITId"],
+				hit_id = params["Event.#{event_id}.HITId"]
 				assignment_id = params["Event.#{event_id}.AssignmentId"]
 
 				puts "[MTurk Notification Receptor] Processing event type #{event_type} for HIT ID #{hit_id}..."
