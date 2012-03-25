@@ -37,6 +37,11 @@ module MacroDeck
 		end
 
 		private
+			# To process a Ping event.
+			def ping
+				puts "[MacroDeck::TurkEventProcessor] Ping"
+			end
+
 			# To process when a HIT is reviewable.
 			def hit_reviewable
 				if !@hit_id.nil?
