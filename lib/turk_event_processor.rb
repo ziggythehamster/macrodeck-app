@@ -61,7 +61,7 @@ module MacroDeck
 						@hit = RTurk::Hit.find(@hit_id)
 
 						# Mark HIT as reviewing.
-						@hit.set_as_reviewing!
+						@hit.set_as_reviewing! if @hit.status == "Reviewable"
 
 						# Parse the JSON stored in annotation
 						begin
@@ -92,7 +92,7 @@ module MacroDeck
 						@hit = RTurk::Hit.find(@hit_id)
 
 						# Mark HIT as reviewing.
-						@hit.set_as_reviewing!
+						@hit.set_as_reviewing! if @hit.status == "Reviewable"
 
 						# Parse the annotation
 						begin
