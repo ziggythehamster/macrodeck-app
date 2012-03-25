@@ -29,14 +29,22 @@ module MacroDeck
 
 		# Cause this event to process.
 		def process!
-			if respond_to? @event_type
-				return self.send(@event_type)
+			puts "[MacroDeck::TurkEventProcessor] Processing requested. Event type = #{@event_type.to_s}"
+
+			if self.private_methods.include? @event_type.to_s
+				return self.send(@event_type.to_sym)
 			else
+				puts "[MacroDeck::TurkEventProcessor] Processor doesn't support event type :("
 				return nil
 			end
 		end
 
 		private
+			# To process an AssignmentAccepted event.
+			def assignment_accepted
+				puts "[MacroDeck::TurkEventProcessor] STUB - Assignment accepted"
+			end
+
 			# To process a Ping event.
 			def ping
 				puts "[MacroDeck::TurkEventProcessor] Ping"
