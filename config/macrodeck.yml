@@ -5,10 +5,7 @@ development:
   path_prefix: /admin/
   turk_path_prefix: /turk/
   turk_sandbox: true
-  turk_answer_hit_type_id: ""
-  turk_answer_reward: 0.25
-  turk_verify_hit_type_id: ""
-  turk_verify_reward: 0.25
+  turk_reward: 0.25
   aws_access_key: ""
   aws_secret_access_key: ""
   base_url: "http://localhost:3000/"
