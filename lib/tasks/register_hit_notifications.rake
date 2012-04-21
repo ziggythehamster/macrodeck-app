@@ -12,10 +12,9 @@ namespace :macrodeck do
 			notification = RTurk::Notification.new
 			notification.transport = 'REST'
 			notification.destination = "#{cfg.base_url}/turk/notification_receptor"
-			notification.event_type = %w{AssignmentAccepted AssignmentAbandoned AssignmentReturned AssignmentSubmitted HITReviewable HITExpired}
+			notification.event_type = %w{AssignmentAccepted AssignmentAbandoned AssignmentReturned AssignmentSubmitted HITReviewable HITExpired Ping}
 
-			RTurk::SetHITTypeNotification(:hit_type_id => cfg.turk_answer_hit_type_id, :notification => notification, :active => true)
-			RTurk::SetHITTypeNotification(:hit_type_id => cfg.turk_verify_hit_type_id, :notification => notification, :active => true)
+			RTurk::SetHITTypeNotification(:hit_type_id => cfg.turk_hit_type_id, :notification => notification, :active => true)
 		end
 	end
 end

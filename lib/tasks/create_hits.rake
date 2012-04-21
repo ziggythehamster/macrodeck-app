@@ -21,7 +21,7 @@ namespace :macrodeck do
 					if tt.prerequisites.length == 0
 						puts "- #{tt.id}: #{tt.title}"
 						hit = RTurk::Hit.create do |h|
-							h.hit_type_id = cfg.turk_answer_hit_type_id
+							h.hit_type_id = cfg.turk_hit_type_id
 							h.assignments = 2
 							h.lifetime = 604800
 							h.note = { "item_id" => obj.id, "path" => "/" + tt.id }.to_json
