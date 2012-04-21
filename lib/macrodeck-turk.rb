@@ -110,7 +110,7 @@ module MacroDeck
 
 				# Get the turk task for the answer.
 				task_id = answer_annotation["path"].split("/").last
-				task_id = task_id.split("=")[0] if task_id.include("=")
+				task_id = task_id.split("=")[0] if task_id.include?("=")
 				task = obj.class.turk_task_by_id(task_id)
 
 				# TODO: Traverse the path and the answer tree to get the $$Whatever$$ to replace in the task title.
