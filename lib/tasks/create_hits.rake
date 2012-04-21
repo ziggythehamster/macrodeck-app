@@ -22,14 +22,21 @@ namespace :macrodeck do
 						puts "- #{tt.id}: #{tt.title}"
 						hit = RTurk::Hit.create do |h|
 							h.hit_type_id = cfg.turk_answer_hit_type_id
-							h.assignments = 1
+							h.assignments = 2
 							h.lifetime = 604800
-							if tt.field["type"].is_a?(Array)
-								h.note = { "item_id" => obj.id, "path" => "/" + tt.id, "multiple_answer" => true }.to_json
-							else
-								h.note = { "item_id" => obj.id, "path" => "/" + tt.id, "multiple_answer" => false }.to_json
-							end
+							h.note = { "item_id" => obj.id, "path" => "/" + tt.id }.to_json
 							h.question("#{cfg.base_url}/turk/#{obj.id}")
+							h.hit_review_policy("SimplePlurality/2011-09-01", {
+								"QuestionIds" => "answer",
+								"QuestionAgreementThreshold" => 50, # More than half have to have the same answer to agree
+								"DisregardAssignmentIfRejected" => false,
+								"ExtendIfHITAgreementScoreIsLessThan" => 100, # The question MUST have an agreed upon answer or we extend
+								"ExtendMaximumAssignments" => 10, # At most 10 people have to come to an agreement. Should be more like 3.
+								"ExtendMinimumTimeInSeconds" => 86400,
+								"ApproveIfWorkerAgreementScoreIsNotLessThan" => 100, # if they get the question right, approve the assignment.
+								"RejectIfWorkerAgreementScoreIsLessThan" => 100, # if they didn't get it right, reject the answer.
+								"RejectReason" => "Your answer did not agree with the answer of other workers."
+							})
 						end
 						puts hit.inspect
 					end
