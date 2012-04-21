@@ -12,6 +12,7 @@ module MacroDeck
 		attr_reader :turk_path_prefix
 		attr_reader :turk_sandbox
 		attr_reader :turk_reward
+		attr_reader :turk_hit_type_id
 		attr_reader :aws_access_key
 		attr_reader :aws_secret_access_key
 		attr_reader :base_url
@@ -56,6 +57,12 @@ module MacroDeck
 					@turk_reward = @config[@environment.to_s]["turk_reward"]
 				else
 					@turk_reward = 0.0
+				end
+
+				if @config[@environment.to_s]["turk_hit_type_id"]
+					@turk_hit_type_id = @config[@environment.to_s]["turk_hit_type_id"]
+				else
+					@turk_hit_type_id = nil
 				end
 
 				if @config[@environment.to_s]["aws_access_key"]
