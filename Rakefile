@@ -2,8 +2,9 @@ require "rubygems"
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), ".")
 $LOAD_PATH << File.join(File.dirname(__FILE__), "lib")
+$LOAD_PATH << File.join(File.dirname(__FILE__), "vendor", "rturk", "lib")
 
-require "vendor/rturk/init"
+require "vendor/rturk/lib/rturk"
 require "lib/macrodeck-config"
 require "macrodeck-platform/init"
 
