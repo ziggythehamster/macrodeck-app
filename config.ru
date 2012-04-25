@@ -5,12 +5,13 @@
 # License: GPL-2, MacroDeck owns all contributions and can re-release them under other licenses
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), "lib")
+$LOAD_PATH << File.join(File.dirname(__FILE__), "vendor", "rturk", "lib")
 
 # Ruby libraries.
 require "rubygems"
 require "builder"
 require "sinatra"
-require "vendor/rturk/init"
+require "vendor/rturk/lib/rturk"
 require "macrodeck-platform/init"
 require "macrodeck-app"
 require "macrodeck-turk"
