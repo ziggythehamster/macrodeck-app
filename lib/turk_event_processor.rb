@@ -59,6 +59,8 @@ module MacroDeck
 					@hit = RTurk::Hit.find(@hit_id)
 					@hit_review_results = RTurk::GetReviewResultsForHIT(:hit_id => @hit_id)
 
+					# TODO: Check that we have all the assignments submitted.
+
 					# Mark HIT as reviewing.
 					@hit.set_as_reviewing! if @hit.status == "Reviewable"
 
@@ -103,12 +105,9 @@ module MacroDeck
 						end
 					end
 
-					# TODO: Get assignment with plurality answer (assignment)
-					return
-
 					path_components = annotation["path"].split("/")[1..-1]
 					resp_key = path_components.last
-					item = ::DataObject.get(_annotation["item_id"])
+					item = ::DataObject.get(annotation["item_id"])
 					item.turk_responses ||= {}
 
 					# Look up the turk task and if there are prerequisites, properly
@@ -123,13 +122,13 @@ module MacroDeck
 					end
 
 					# Is answer an array?
-					if assignment.answers.key?("answer[]")
-						root[resp_key] = answer_assignment.answers["answer[]"].split("|")
+					if the_answer.is_a?(Array)
+						root[resp_key] = the_answer
 						root[resp_key].each do |resp_val|
 							root["#{resp_key}=#{resp_val}"] = {}
 						end
 					else
-						root[resp_key] = answer_assignment.answers["answer"]
+						root[resp_key] = the_answer
 						root["#{resp_key}="] = {}
 					end
 
@@ -154,7 +153,7 @@ module MacroDeck
 						puts "Answer does not have a parent."
 
 						# It doesn't, is this answer an array?
-						if answer_assignment.answers.key?("answer[]")
+						if the_answer.is_a?(Array)
 							puts "Answer is an array."
 
 							# Get next task (this is an array).
@@ -167,8 +166,7 @@ module MacroDeck
 								if tt.prerequisites_met?(resp) && !tt.answered?(resp)
 									self.create_hit({
 										"item_id" => item.id,
-										"path" => path,
-										"multiple_answer" => tt.field["type"].is_a?(Array)
+										"path" => path
 									})
 								end
 							end
@@ -183,8 +181,7 @@ module MacroDeck
 									path = "/#{resp_key}/#{tt.id}"
 									self.create_hit({
 										"item_id" => item.id,
-										"path" => path,
-										"multiple_answer" => tt.field["type"].is_a?(Array)
+										"path" => path
 									})
 								end
 							end
@@ -227,8 +224,7 @@ module MacroDeck
 
 									self.create_hit({
 										"item_id" => item.id,
-										"path" => path,
-										"multiple_answer" => item.class.turk_task_by_id(parent_key).field["type"].is_a?(Array)
+										"path" => path
 									})
 
 									break
@@ -247,8 +243,7 @@ module MacroDeck
 
 										self.create_hit({
 											"item_id" => item.id,
-											"path" => path,
-											"multiple_answer" => tt.field["type"].is_a?(Array)
+											"path" => path
 										})
 									end
 								end
@@ -260,11 +255,10 @@ module MacroDeck
 							item.class.turk_tasks.each do |tt|
 								puts "Checking if #{tt.id} is answered/answerable..."
 								if tt.prerequisites_met?(item.turk_responses) && !tt.answered?(item.turk_responses)
-									path = "#{answer_annotation["path"]}/#{tt.id}"
+									path = "#{annotation["path"]}/#{tt.id}"
 									self.create_hit({
 										"item_id" => item.id,
-										"path" => path,
-										"multiple_answer" => tt.field["type"].is_a?(Array)
+										"path" => path
 									})
 								end
 							end
