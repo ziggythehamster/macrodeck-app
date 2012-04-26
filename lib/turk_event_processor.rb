@@ -69,7 +69,40 @@ module MacroDeck
 						annotation = {}
 					end
 
-					# TODO: Get plurality answer.
+					# Get assignment IDs that have the correct answer and those that don't.
+					correct_assignments = []
+					incorrect_assignments = []
+					the_answer = nil
+
+					@hit_review_results.hit_review_report.each do |report|
+						if report[:type] == "result" && report[:key] == "WorkerAgreementScore"
+							if report[:value].to_i == 100
+								correct_assignments << report[:subject_id]
+							else
+								incorrect_assignments << report[:subject_id]
+							end
+						end
+					end
+
+					# Loop through HIT assignments and approve/deny as needed.
+					# Also get the plurality answer.
+					@hit.assignments.each do |assignment|
+						if correct_assignments.include?(assignment.id)
+							if the_answer.nil?
+								if assignment.answers.key?("answer[]")
+									the_answer = assignment.answers["answer[]"].split("|")
+								else
+									the_answer = assignment.answers["answer"]
+								end
+							end
+							assignment.approve!("The majority of workers agreed with your answer.")
+						elsif incorrect_assignments.include?(assignment.id)
+							assignment.reject!("The majority of workers disagreed with your answer.")
+						else
+							puts "*** Assignment ID #{assignment.id} is neither correct nor incorrect."
+						end
+					end
+
 					# TODO: Get assignment with plurality answer (assignment)
 					return
 
