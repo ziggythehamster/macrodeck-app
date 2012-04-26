@@ -59,7 +59,11 @@ module MacroDeck
 					@hit = RTurk::Hit.find(@hit_id)
 					@hit_review_results = RTurk::GetReviewResultsForHIT(:hit_id => @hit_id)
 
-					# TODO: Check that we have all the assignments submitted.
+					# Check that we have all the assignments submitted.
+					if @hit.max_assignments != @hit.assignments.length
+						puts "[MacroDeck::TurkEventProcessor] Not processing - expected HIT to have #{@hit.max_assignments} assignments, but only had #{@hit.assignments.length}"
+						return
+					end
 
 					# Mark HIT as reviewing.
 					@hit.set_as_reviewing! if @hit.status == "Reviewable"
