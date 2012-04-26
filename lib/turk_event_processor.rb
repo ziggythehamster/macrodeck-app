@@ -105,7 +105,7 @@ module MacroDeck
 						elsif incorrect_assignments.include?(assignment.id)
 							assignment.reject!("The majority of workers disagreed with your answer.")
 						else
-							puts "*** Assignment ID #{assignment.id} is neither correct nor incorrect."
+							puts "[MacroDeck::TurkEventProcessor] *** Assignment ID #{assignment.id} is neither correct nor incorrect."
 						end
 					end
 
@@ -139,7 +139,7 @@ module MacroDeck
 					# Save item.
 					item.save
 
-					puts "Creating new answer HIT..."
+					puts "[MacroDeck::TurkEventProcessor] Creating new answer HIT..."
 
 					# Does this answer have a parent? (path length != 1)
 					# Yes -> Is parent an array?
@@ -154,15 +154,15 @@ module MacroDeck
 
 					# Check if this answer has a parent
 					if path_components.length == 1
-						puts "Answer does not have a parent."
+						puts "[MacroDeck::TurkEventProcessor] Answer does not have a parent."
 
 						# It doesn't, is this answer an array?
 						if the_answer.is_a?(Array)
-							puts "Answer is an array."
+							puts "[MacroDeck::TurkEventProcessor] Answer is an array."
 
 							# Get next task (this is an array).
 							item.class.turk_tasks.each do |tt|
-								puts "Checking if #{tt.id} is answered/answerable..."
+								puts "[MacroDeck::TurkEventProcessor] Checking if #{tt.id} is answered/answerable..."
 
 								resp = { resp_key => [ item.turk_responses[resp_key].first ] }
 								path = "/#{resp_key}=#{item.turk_responses[resp_key].first}/#{tt.id}"
@@ -175,11 +175,11 @@ module MacroDeck
 								end
 							end
 						else
-							puts "Answer is not an array."
+							puts "[MacroDeck::TurkEventProcessor] Answer is not an array."
 
 							# Get next task (this is not an array).
 							item.class.turk_tasks.each do |tt|
-								puts "Checking if #{tt.id} is answered/answerable..."
+								puts "[MacroDeck::TurkEventProcessor] Checking if #{tt.id} is answered/answerable..."
 
 								if tt.prerequisites_met?(item.turk_responses) && !tt.answered?(item.turk_responses)
 									path = "/#{resp_key}/#{tt.id}"
@@ -191,12 +191,12 @@ module MacroDeck
 							end
 						end
 					else
-						puts "Answer has a parent."
+						puts "[MacroDeck::TurkEventProcessor] Answer has a parent."
 
 						# Parent an array? (Check path up until second-to-last component
 						# to see if it has an =)
 						if path_components[-2].include?("=")
-							puts "Parent is an array."
+							puts "[MacroDeck::TurkEventProcessor] Parent is an array."
 
 							# Parent is an array
 							parent = item.turk_responses # which is wrong, we will eventually have a valid parent.
@@ -216,11 +216,11 @@ module MacroDeck
 
 							# Now, let's iterate the answers.
 							parent_answers.each do |answer|
-								puts "Checking if answer #{answer} is answered..."
+								puts "[MacroDeck::TurkEventProcessor] Checking if answer #{answer} is answered..."
 
 								# Check if answered
 								if !parent.key?("#{parent_key}=#{answer}") && !parent["#{parent_key}=#{answer}"].key?(resp_key)
-									puts "Nope! (Chuck Testa.)"
+									puts "[MacroDeck::TurkEventProcessor] Nope! (Chuck Testa.)"
 
 									make_child = false
 
@@ -237,10 +237,10 @@ module MacroDeck
 
 							# Make the child if needed.
 							if make_child
-								puts "All answers answered - making child."
+								puts "[MacroDeck::TurkEventProcessor] All answers answered - making child."
 
 								item.class.turk_tasks.each do |tt|
-									puts "Checking if #{tt.id} is answered/answerable..."
+									puts "[MacroDeck::TurkEventProcessor] Checking if #{tt.id} is answered/answerable..."
 
 									if tt.prerequisites_met?(item.turk_responses) && !tt.answered?(item.turk_responses)
 										path = "/#{path_components.join("/")}/#{tt.id}"
@@ -253,11 +253,11 @@ module MacroDeck
 								end
 							end
 						else
-							puts "Parent is not an array."
+							puts "[MacroDeck::TurkEventProcessor] Parent is not an array."
 
 							# Parent is not an array
 							item.class.turk_tasks.each do |tt|
-								puts "Checking if #{tt.id} is answered/answerable..."
+								puts "[MacroDeck::TurkEventProcessor] Checking if #{tt.id} is answered/answerable..."
 								if tt.prerequisites_met?(item.turk_responses) && !tt.answered?(item.turk_responses)
 									path = "#{annotation["path"]}/#{tt.id}"
 									self.create_hit({
@@ -276,13 +276,13 @@ module MacroDeck
 			# params accepted:
 			# item_id, path, multiple_answer
 			def create_hit(params = {})
-				puts "Creating HIT. ItemID=#{params["item_id"]} Path=#{params["path"]} MultipleAnswer=#{params["multiple_answer"].to_s}"
+				puts "[MacroDeck::TurkEventProcessor] Creating HIT. ItemID=#{params["item_id"]} Path=#{params["path"]}"
 
 				hit = RTurk::Hit.create do |h|
 					h.hit_type_id = @configuration.turk_answer_hit_type_id
 					h.assignments = 1
 					h.lifetime = 604800
-					h.note = { "item_id" => params["item_id"], "path" => params["path"], "multiple_answer" => params["multiple_answer"] }.to_json
+					h.note = { "item_id" => params["item_id"], "path" => params["path"] }.to_json
 					h.question("#{@configuration.base_url}/turk/#{params["item_id"]}")
 				end
 				return hit
