@@ -280,10 +280,11 @@ module MacroDeck
 
 				hit = RTurk::Hit.create do |h|
 					h.hit_type_id = @configuration.turk_answer_hit_type_id
-					h.assignments = 1
+					h.assignments = 2
 					h.lifetime = 604800
 					h.note = { "item_id" => params["item_id"], "path" => params["path"] }.to_json
 					h.question("#{@configuration.base_url}/turk/#{params["item_id"]}")
+					h.hit_review_policy("SimplePlurality/2011-09-01", @configuration.hit_review_policy_defaults)
 				end
 				return hit
 			end
