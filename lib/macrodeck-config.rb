@@ -93,6 +93,20 @@ module MacroDeck
 				end
 			end
 		end
+
+		def hit_review_policy_defaults
+			{
+				"QuestionIds" => "answer",
+				"QuestionAgreementThreshold" => 50, # More than half have to have the same answer to agree
+				"DisregardAssignmentIfRejected" => false,
+				"ExtendIfHITAgreementScoreIsLessThan" => 100, # The question MUST have an agreed upon answer or we extend
+				"ExtendMaximumAssignments" => 10, # At most 10 people have to come to an agreement. Should be more like 3.
+				"ExtendMinimumTimeInSeconds" => 86400,
+				"ApproveIfWorkerAgreementScoreIsNotLessThan" => 99, # if they get the question right, approve the assignment.
+				"RejectIfWorkerAgreementScoreIsLessThan" => 100, # if they didn't get it right, reject the answer.
+				"RejectReason" => "Your answer did not agree with the answer of other workers."
+			}.freeze
+		end
 	end
 end
 
