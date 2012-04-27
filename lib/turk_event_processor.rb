@@ -101,9 +101,9 @@ module MacroDeck
 									the_answer = assignment.answers["answer"]
 								end
 							end
-							assignment.approve!("The majority of workers agreed with your answer.")
+							assignment.approve!("The majority of workers agreed with your answer.") if assignment.status == "Submitted"
 						elsif incorrect_assignments.include?(assignment.id)
-							assignment.reject!("The majority of workers disagreed with your answer.")
+							assignment.reject!("The majority of workers disagreed with your answer.") if assignment.status == "Submitted"
 						else
 							puts "[MacroDeck::TurkEventProcessor] *** Assignment ID #{assignment.id} is neither correct nor incorrect."
 						end
@@ -168,7 +168,7 @@ module MacroDeck
 								path = "/#{resp_key}=#{item.turk_responses[resp_key].first}/#{tt.id}"
 
 								if tt.prerequisites_met?(resp) && !tt.answered?(resp)
-									self.create_hit({
+									create_hit({
 										"item_id" => item.id,
 										"path" => path
 									})
@@ -183,7 +183,7 @@ module MacroDeck
 
 								if tt.prerequisites_met?(item.turk_responses) && !tt.answered?(item.turk_responses)
 									path = "/#{resp_key}/#{tt.id}"
-									self.create_hit({
+									create_hit({
 										"item_id" => item.id,
 										"path" => path
 									})
@@ -226,7 +226,7 @@ module MacroDeck
 
 									path = "/#{path_components[0..-3].join("/")}/#{parent_key}=#{answer}/#{resp_key}"
 
-									self.create_hit({
+									create_hit({
 										"item_id" => item.id,
 										"path" => path
 									})
@@ -245,7 +245,7 @@ module MacroDeck
 									if tt.prerequisites_met?(item.turk_responses) && !tt.answered?(item.turk_responses)
 										path = "/#{path_components.join("/")}/#{tt.id}"
 
-										self.create_hit({
+										create_hit({
 											"item_id" => item.id,
 											"path" => path
 										})
@@ -260,7 +260,7 @@ module MacroDeck
 								puts "[MacroDeck::TurkEventProcessor] Checking if #{tt.id} is answered/answerable..."
 								if tt.prerequisites_met?(item.turk_responses) && !tt.answered?(item.turk_responses)
 									path = "#{annotation["path"]}/#{tt.id}"
-									self.create_hit({
+									create_hit({
 										"item_id" => item.id,
 										"path" => path
 									})
@@ -279,7 +279,7 @@ module MacroDeck
 				puts "[MacroDeck::TurkEventProcessor] Creating HIT. ItemID=#{params["item_id"]} Path=#{params["path"]}"
 
 				hit = RTurk::Hit.create do |h|
-					h.hit_type_id = @configuration.turk_answer_hit_type_id
+					h.hit_type_id = @configuration.turk_hit_type_id
 					h.assignments = 2
 					h.lifetime = 604800
 					h.note = { "item_id" => params["item_id"], "path" => params["path"] }.to_json
