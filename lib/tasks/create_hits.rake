@@ -13,17 +13,7 @@ namespace :macrodeck do
 							h.lifetime = 604800
 							h.note = { "item_id" => obj.id, "path" => "/" + tt.id }.to_json
 							h.question("#{@cfg.base_url}/turk/#{obj.id}")
-							h.hit_review_policy("SimplePlurality/2011-09-01", {
-								"QuestionIds" => "answer",
-								"QuestionAgreementThreshold" => 50, # More than half have to have the same answer to agree
-								"DisregardAssignmentIfRejected" => false,
-								"ExtendIfHITAgreementScoreIsLessThan" => 100, # The question MUST have an agreed upon answer or we extend
-								"ExtendMaximumAssignments" => 10, # At most 10 people have to come to an agreement. Should be more like 3.
-								"ExtendMinimumTimeInSeconds" => 86400,
-								"ApproveIfWorkerAgreementScoreIsNotLessThan" => 100, # if they get the question right, approve the assignment.
-								"RejectIfWorkerAgreementScoreIsLessThan" => 100, # if they didn't get it right, reject the answer.
-								"RejectReason" => "Your answer did not agree with the answer of other workers."
-							})
+							h.hit_review_policy("SimplePlurality/2011-09-01", @cfg.hit_review_policy_defaults)
 						end
 						puts hit.inspect
 					end
