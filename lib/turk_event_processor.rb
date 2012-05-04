@@ -75,6 +75,18 @@ module MacroDeck
 						annotation = {}
 					end
 
+					# Get the item we're operating on.
+					item = ::DataObject.get(annotation["item_id"])
+					item.turk_responses ||= {}
+					item.turk_events ||= {}
+					item.turk_events["hit_reviewable"] ||= {}
+
+					# Check if we have already worked on this item.
+					if !item.turk_events["hit_reviewable"][@hit_id].nil?
+						puts "[MacroDeck::TurkEventProcessor] Not processing - event already processed for HIT ID #{@hit_id}"
+						return
+					end
+
 					# Get assignment IDs that have the correct answer and those that don't.
 					correct_assignments = []
 					incorrect_assignments = []
@@ -109,10 +121,9 @@ module MacroDeck
 						end
 					end
 
+					# Get the path components and response key.
 					path_components = annotation["path"].split("/")[1..-1]
 					resp_key = path_components.last
-					item = ::DataObject.get(annotation["item_id"])
-					item.turk_responses ||= {}
 
 					# Look up the turk task and if there are prerequisites, properly
 					# set the root of the tree to the prerequisite values.
@@ -268,6 +279,10 @@ module MacroDeck
 							end
 						end
 					end
+
+					# Mark event as processed.
+					item.turk_events["hit_reviewable"][@hit_id] = Time.new.getutc.iso8601
+					item.save
 				end
 			end
 
