@@ -6,10 +6,16 @@ module MacroDeck
 		end
 
 		# Return a textarea.
-		def to_form_field
+		def to_form_field(field_name = :description, params = {})
+			if params[:name].nil?
+				name = field_name
+			else
+				name = params[:name]
+			end
+
 			output = ""
-			output << form_label(:description)
-			output << "<textarea rows=\"3\" name=\"description\">"
+			output << form_label(name)
+			output << "<textarea rows=\"3\" name=\"#{Rack::Utils.escape_html(name.to_s)}\">"
 			output << Rack::Utils.escape_html(@data_object.description)
 			output << "</textarea>"
 			return output
