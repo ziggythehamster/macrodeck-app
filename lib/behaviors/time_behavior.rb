@@ -8,14 +8,20 @@ module MacroDeck
 			return Rack::Utils.escape_html(@data_object.time)
 		end
 
-		def to_form_field
+		def to_form_field(field_name = :time, params = {})
+			if params[:name].nil?
+				name = field_name
+			else
+				name = params[:name]
+			end
+
 			output = ""
-			output << "<label for=\"time_date\">Date</label>"
-			output << date_picker_field("time", Time.new.strftime("%F")) if @data_object.time.nil?
-			output << date_picker_field("time", Time.parse(@data_object.time).strftime("%F")) unless @data_object.time.nil?
-			output << "<label for=\"time_time\">Time</label>"
-			output << time_picker_field("time", Time.new.strftime("%H:%M")) if @data_object.time.nil?
-			output << time_picker_field("time", Time.parse(@data_object.time).strftime("%H:%M")) unless @data_object.time.nil?
+			output << "<label for=\"#{Rack::Utils.escape_html(name.to_s)}_date\">Date</label>"
+			output << date_picker_field(name, Time.new.strftime("%F")) if @data_object.time.nil?
+			output << date_picker_field(name, Time.parse(@data_object.time).strftime("%F")) unless @data_object.time.nil?
+			output << "<label for=\"#{Rack::Utils.escape_html(name.to_s)}_time\">Time</label>"
+			output << time_picker_field(name, Time.new.strftime("%H:%M")) if @data_object.time.nil?
+			output << time_picker_field(name, Time.parse(@data_object.time).strftime("%H:%M")) unless @data_object.time.nil?
 			return output
 		end
 
