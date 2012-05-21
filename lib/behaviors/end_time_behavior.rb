@@ -11,15 +11,21 @@ module MacroDeck
 			end
 		end
 
-		def to_form_field
+		def to_form_field(field_name = :end_time, params = {})
+			if params[:name].nil?
+				name = field_name
+			else
+				name = params[:name]
+			end
+
 			output = ""
-			output << "<label for=\"end_time_date\">End Date</label>"
-			output << no_end_picker_field("end_time", @data_object.end_time.nil?, "This event does not have an end time")
-			output << date_picker_field("end_time", Time.new.strftime("%F")) if @data_object.end_time.nil?
-			output << date_picker_field("end_time", Time.parse(@data_object.end_time).getlocal.strftime("%F")) unless @data_object.end_time.nil?
-			output << "<label for=\"end_time_time\">End Time</label>"
-			output << time_picker_field("end_time", Time.new.strftime("%H:%M")) if @data_object.end_time.nil?
-			output << time_picker_field("end_time", Time.parse(@data_object.end_time).getlocal.strftime("%H:%M")) unless @data_object.end_time.nil?
+			output << "<label for=\"#{Rack::Utils.escape_html(name.to_s)}_date\">End Date</label>"
+			output << no_end_picker_field(name, @data_object.end_time.nil?, "This event does not have an end time")
+			output << date_picker_field(name, Time.new.strftime("%F")) if @data_object.end_time.nil?
+			output << date_picker_field(name, Time.parse(@data_object.end_time).getlocal.strftime("%F")) unless @data_object.end_time.nil?
+			output << "<label for=\"#{Rack::Utils.escape_html(name.to_s)}_time\">End Time</label>"
+			output << time_picker_field(name, Time.new.strftime("%H:%M")) if @data_object.end_time.nil?
+			output << time_picker_field(name, Time.parse(@data_object.end_time).getlocal.strftime("%H:%M")) unless @data_object.end_time.nil?
 			return output
 		end
 	end
