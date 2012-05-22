@@ -9,10 +9,16 @@ module MacroDeck
 			end
 		end
 
-		def to_form_field
+		def to_form_field(field_name = :address, params = {})
+			if params[:name].nil?
+				name = field_name
+			else
+				name = params[:name]
+			end
+
 			output = ""
-			output << form_label(:address)
-			output << form_input(:address)
+			output << form_label(name)
+			output << form_input(name)
 			return output
 		end
 	end
