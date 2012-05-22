@@ -1,9 +1,15 @@
 module MacroDeck
 	# Renders a list of fares as a list of items, concatenated by commas.
 	class FareBehavior < Behavior
-		def to_form_field
-			out  = form_label(:fare)
-			out << form_input(:fare)
+		def to_form_field(field_name = :fare, params = {})
+			if params[:name].nil?
+				name = field_name
+			else
+				name = params[:name]
+			end
+
+			out  = form_label(name)
+			out << form_input(name)
 			return out
 		end
 
