@@ -1,9 +1,15 @@
 module MacroDeck
 	# Renders the event type as a paragraph.
 	class EventTypeBehavior < Behavior
-		def to_form_field
-			out  = form_label(:event_type)
-			out << "<select name=\"event_type\">"
+		def to_form_field(field_name = :event_type, params = {})
+			if params[:name].nil?
+				name = field_name
+			else
+				name = params[:name]
+			end
+
+			out  = form_label(name)
+			out << "<select name=\"#{Rack::Utils.escape_html(name)}\">"
 			out << "<option>Drink Special</option>"
 			out << "<option>Drink Special and Entertainment</option>"
 			out << "<option>Entertainment</option>"
