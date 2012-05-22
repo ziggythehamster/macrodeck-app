@@ -17,11 +17,11 @@ module MacroDeck
 
 			output = ""
 			output << "<label for=\"#{Rack::Utils.escape_html(name.to_s)}_date\">Date</label>"
-			output << date_picker_field(name, Time.new.strftime("%F")) if @data_object.time.nil?
-			output << date_picker_field(name, Time.parse(@data_object.time).strftime("%F")) unless @data_object.time.nil?
+			output << date_picker_field(name, Time.new.strftime("%F")) if @data_object.send(field_name.to_sym).nil?
+			output << date_picker_field(name, Time.parse(@data_object.send(field_name.to_sym)).strftime("%F")) unless @data_object.send(field_name.to_sym).nil?
 			output << "<label for=\"#{Rack::Utils.escape_html(name.to_s)}_time\">Time</label>"
-			output << time_picker_field(name, Time.new.strftime("%H:%M")) if @data_object.time.nil?
-			output << time_picker_field(name, Time.parse(@data_object.time).strftime("%H:%M")) unless @data_object.time.nil?
+			output << time_picker_field(name, Time.new.strftime("%H:%M")) if @data_object.send(field_name.to_sym).nil?
+			output << time_picker_field(name, Time.parse(@data_object.send(field_name.to_sym)).strftime("%H:%M")) unless @data_object.send(field_name.to_sym).nil?
 			return output
 		end
 
