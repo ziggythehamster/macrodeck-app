@@ -16,8 +16,8 @@ module MacroDeck
 
 			output = ""
 			output << "<label for=\"#{Rack::Utils.escape_html(name.to_s)}_date\">Date</label>"
-			output << date_picker_field(name, Time.new.strftime("%F")) if @data_object.date.nil?
-			output << date_picker_field(name, Date.parse(@data_object.date).strftime("%F")) unless @data_object.date.nil?
+			output << date_picker_field(name, Time.new.strftime("%F")) if @data_object.send(field_name.to_sym).nil?
+			output << date_picker_field(name, Date.parse(@data_object.send(field_name.to_sym)).strftime("%F")) unless @data_object.send(field_name.to_sym).nil?
 			return output
 		end
 
