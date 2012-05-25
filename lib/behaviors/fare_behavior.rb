@@ -8,8 +8,8 @@ module MacroDeck
 				name = params[:name]
 			end
 
-			out  = form_label(name)
-			out << form_input(name)
+			out  = form_label(field_name, :name => name)
+			out << form_input(field_name, :text, { :name => name })
 			return out
 		end
 
