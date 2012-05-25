@@ -14,9 +14,9 @@ module MacroDeck
 			end
 
 			output = ""
-			output << form_label(name)
+			output << form_label(field_name, :name => name)
 			output << "<textarea rows=\"3\" name=\"#{Rack::Utils.escape_html(name.to_s)}\">"
-			output << Rack::Utils.escape_html(@data_object.description)
+			output << Rack::Utils.escape_html(@data_object.send(field_name.to_sym))
 			output << "</textarea>"
 			return output
 		end
