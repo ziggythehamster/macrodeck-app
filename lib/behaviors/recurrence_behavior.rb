@@ -8,7 +8,7 @@ module MacroDeck
 				name = params[:name]
 			end
 
-			out  = form_label(name)
+			out  = form_label(field_name, :name => name)
 			out << "<select name=\"#{Rack::Utils.escape_html(name.to_s)}\">"
 			out << "<option value=\"none\">None</option>"
 			out << "<option value=\"weekly\">Weekly</option>"
