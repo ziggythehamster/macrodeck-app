@@ -10,8 +10,8 @@ module MacroDeck
 			end
 
 			output = ""
-			output << form_label(name)
-			output << form_input(name, :text, { :size => 10 })
+			output << form_label(field_name, :name => name)
+			output << form_input(field_name, :text, { :size => 10, :name => name })
 			return output
 		end
 	end
