@@ -8,7 +8,7 @@ module MacroDeck
 				name = params[:name]
 			end
 
-			out  = form_label(name)
+			out  = form_label(field_name, :name => name)
 			out << "<select name=\"#{Rack::Utils.escape_html(name)}\">"
 			out << "<option>Drink Special</option>"
 			out << "<option>Drink Special and Entertainment</option>"
