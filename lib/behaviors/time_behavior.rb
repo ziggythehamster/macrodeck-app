@@ -16,9 +16,15 @@ module MacroDeck
 			end
 
 			output = ""
-			output << "<label for=\"#{Rack::Utils.escape_html(name.to_s)}_date\">Date</label>"
-			output << date_picker_field(name, Time.new.strftime("%F")) if @data_object.send(field_name.to_sym).nil?
-			output << date_picker_field(name, Time.parse(@data_object.send(field_name.to_sym)).strftime("%F")) unless @data_object.send(field_name.to_sym).nil?
+
+			if params[:hide_date]
+				output << "<input type=\"hidden\" name=\"#{Rack::Utils.escape_html(name.to_s)}_date\" value=\"#{Rack::Utils.escape_html(Time.new.strftime("%F"))}\" />"
+			else
+				output << "<label for=\"#{Rack::Utils.escape_html(name.to_s)}_date\">Date</label>"
+				output << date_picker_field(name, Time.new.strftime("%F")) if @data_object.send(field_name.to_sym).nil?
+				output << date_picker_field(name, Time.parse(@data_object.send(field_name.to_sym)).strftime("%F")) unless @data_object.send(field_name.to_sym).nil?
+			end
+
 			output << "<label for=\"#{Rack::Utils.escape_html(name.to_s)}_time\">Time</label>"
 			output << time_picker_field(name, Time.new.strftime("%H:%M")) if @data_object.send(field_name.to_sym).nil?
 			output << time_picker_field(name, Time.parse(@data_object.send(field_name.to_sym)).strftime("%H:%M")) unless @data_object.send(field_name.to_sym).nil?
