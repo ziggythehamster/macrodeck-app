@@ -16,7 +16,7 @@
 		</div>
 	<% else %>
 		<div class="field">
-			<%= behavior.new(task).to_form_field(task.field["name"], :name => "answer") %>
+			<%= behavior.new(task).to_form_field(task.field["name"], { :name => "answer" }.merge(task.field["params"]) %>
 		</div>
 	<% end %>
 
