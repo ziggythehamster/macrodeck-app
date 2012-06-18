@@ -210,14 +210,18 @@ module MacroDeck
 
 							# Get next task (this is not an array).
 							item.class.turk_tasks.each do |tt|
-								puts "[MacroDeck::TurkEventProcessor] Checking if #{tt.id} is answered/answerable..."
+								if tt.id == resp_key
+									puts "[MacroDeck::TurkEventProcessor] Not checking #{tt.id} because it is the task we're currently processing and that would be stupid."
+								else
+									puts "[MacroDeck::TurkEventProcessor] Checking if #{tt.id} is answerable..."
 
-								if tt.prerequisites_met?(item.turk_responses) && !tt.answered?(item.turk_responses)
-									path = "/#{resp_key}/#{tt.id}"
-									create_hit({
-										"item_id" => item.id,
-										"path" => path
-									})
+									if tt.prerequisites_met?(item.turk_responses) && !tt.answered?(item.turk_responses)
+										path = "/#{resp_key}/#{tt.id}"
+										create_hit({
+											"item_id" => item.id,
+											"path" => path
+										})
+									end
 								end
 							end
 						end
@@ -245,7 +249,7 @@ module MacroDeck
 
 							make_child = true
 
-							# Now, let's iterate the answers.
+							# Now, let's iterate the answers. This is where we create siblings.
 							parent_answers.each do |answer|
 								puts "[MacroDeck::TurkEventProcessor] Checking if answer #{answer} is answered..."
 
@@ -271,15 +275,19 @@ module MacroDeck
 								puts "[MacroDeck::TurkEventProcessor] All answers answered - making child."
 
 								item.class.turk_tasks.each do |tt|
-									puts "[MacroDeck::TurkEventProcessor] Checking if #{tt.id} is answered/answerable..."
+									if tt.id == resp_key
+										puts "[MacroDeck::TurkEventProcessor] Not checking #{tt.id} because it is the task we're currently processing and that would be stupid."
+									else
+										puts "[MacroDeck::TurkEventProcessor] Checking if #{tt.id} is answered..."
 
-									if tt.prerequisites_met?(item.turk_responses) && !tt.answered?(item.turk_responses)
-										path = "/#{path_components.join("/")}/#{tt.id}"
+										if tt.prerequisites_met?(item.turk_responses) && !tt.answered?(item.turk_responses)
+											path = "/#{path_components.join("/")}/#{tt.id}"
 
-										create_hit({
-											"item_id" => item.id,
-											"path" => path
-										})
+											create_hit({
+												"item_id" => item.id,
+												"path" => path
+											})
+										end
 									end
 								end
 							end
@@ -288,13 +296,17 @@ module MacroDeck
 
 							# Parent is not an array
 							item.class.turk_tasks.each do |tt|
-								puts "[MacroDeck::TurkEventProcessor] Checking if #{tt.id} is answered/answerable..."
-								if tt.prerequisites_met?(item.turk_responses) && !tt.answered?(item.turk_responses)
-									path = "#{annotation["path"]}/#{tt.id}"
-									create_hit({
-										"item_id" => item.id,
-										"path" => path
-									})
+								if tt.id == resp_key
+									puts "[MacroDeck::TurkEventProcessor] Not checking #{tt.id} because it is the task we're currently processing and that would be stupid."
+								else
+									puts "[MacroDeck::TurkEventProcessor] Checking if #{tt.id} is answered..."
+									if tt.prerequisites_met?(item.turk_responses) && !tt.answered?(item.turk_responses)
+										path = "#{annotation["path"]}/#{tt.id}"
+										create_hit({
+											"item_id" => item.id,
+											"path" => path
+										})
+									end
 								end
 							end
 						end
