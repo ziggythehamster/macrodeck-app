@@ -42,7 +42,32 @@ module MacroDeck
 		private
 			# To process an AssignmentAccepted event.
 			def assignment_accepted
-				puts "[MacroDeck::TurkEventProcessor] STUB - Assignment accepted"
+				if !@hit_id.nil?
+					puts "[MacroDeck::TurkEventProcessor] AssignmentAccepted"
+
+					# Look up the HIT
+					@hit = RTurk::Hit.find(@hit_id)
+
+					# Parse the JSON stored in annotation
+					begin
+						annotation = JSON.parse(@hit.annotation)
+					rescue JSON::ParserError
+						annotation = {}
+					end
+
+					# Get the item we're operating on.
+					item = ::DataObject.get(annotation["item_id"])
+
+					# Check if we have already worked on this item.
+					if !item.turk_events["assignment_accepted"][@assignment_id].nil?
+						puts "[MacroDeck::TurkEventProcessor] Not processing - event already processed for Assignment ID #{@assignment_id}"
+						return
+					end
+
+					# Mark event as processed.
+					item.turk_events["assignment_accepted"][@assignment_id] = Time.new.getutc.iso8601
+					item.save
+				end
 			end
 
 			# To process a Ping event.
