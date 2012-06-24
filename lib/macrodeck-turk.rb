@@ -73,14 +73,34 @@ module MacroDeck
 		# Render a question for the requested ID.
 		get '/:id/?' do
 			obj = ::DataObject.get(params[:id])
+			hit_id = params[:hitId]
+			assignment_id = params[:assignmentId]
+			hit = RTurk::Hit.find(hit_id)
+
+			# Get the HIT's annotation
+			begin
+				annotation = JSON.parse(hit.annotation)
+			rescue JSON::ParserError
+				annotation = {}
+			end
+
+			puts "HIT Path: #{annotation["path"]}"
+
+			path_components = annotation["path"].split("/")[1..-1]
 
 			if obj.class.respond_to?(:turk_tasks) && !obj.class.turk_tasks.nil? && obj.class.turk_tasks.length > 0
 				# Render the question
 				task = nil
 				answers = obj.turk_responses
-				obj.class.turk_tasks.each do |tt|
-					task = tt if task.nil? && tt.prerequisites_met?(answers) && !tt.answered?(answers)
+
+				if path_components[-1].include?("=")
+					task = obj.class.turk_task_by_id(path_components[-1].split("=")[0])
+				else
+					task = obj.class.turk_task_by_id(path_components[-1])
 				end
+
+				puts "Rendering question form for #{task.id}"
+
 				erb :"turk_question.html", :layout => self.configuration.layout.to_sym, :locals => { :task => task, :item => obj, :assignment_id => params[:assignmentId] }
 			else
 				erb :"turk_no_questions.html", :layout => self.configuration.layout.to_sym
