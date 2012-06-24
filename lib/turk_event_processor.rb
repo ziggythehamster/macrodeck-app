@@ -42,7 +42,7 @@ module MacroDeck
 		private
 			# To process an AssignmentAccepted event.
 			def assignment_accepted
-				if !@hit_id.nil?
+				if !@hit_id.nil? && !@assignment_id.nil?
 					puts "[MacroDeck::TurkEventProcessor] AssignmentAccepted"
 
 					# Look up the HIT
@@ -57,6 +57,8 @@ module MacroDeck
 
 					# Get the item we're operating on.
 					item = ::DataObject.get(annotation["item_id"])
+					item.turk_events ||= {}
+					item.turk_events["assignment_accepted"] ||= {}
 
 					# Check if we have already worked on this item.
 					if !item.turk_events["assignment_accepted"][@assignment_id].nil?
