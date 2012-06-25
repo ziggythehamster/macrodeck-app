@@ -72,6 +72,38 @@ module MacroDeck
 				end
 			end
 
+			# To process an AssignmentSubmitted event.
+			def assignment_submitted
+				if !@hit_id.nil? && !@assignment_id.nil?
+					puts "[MacroDeck::TurkEventProcessor] AssignmentSubmitted"
+
+					# Look up the HIT
+					@hit = RTurk::Hit.find(@hit_id)
+
+					# Parse the JSON stored in annotation
+					begin
+						annotation = JSON.parse(@hit.annotation)
+					rescue JSON::ParserError
+						annotation = {}
+					end
+
+					# Get the item we're operating on.
+					item = ::DataObject.get(annotation["item_id"])
+					item.turk_events ||= {}
+					item.turk_events["assignment_submitted"] ||= {}
+
+					# Check if we have already worked on this item.
+					if !item.turk_events["assignment_submitted"][@assignment_id].nil?
+						puts "[MacroDeck::TurkEventProcessor] Not processing - event already processed for Assignment ID #{@assignment_id}"
+						return
+					end
+
+					# Mark event as processed.
+					item.turk_events["assignment_submitted"][@assignment_id] = Time.new.getutc.iso8601
+					item.save
+				end
+			end
+
 			# To process a Ping event.
 			def ping
 				puts "[MacroDeck::TurkEventProcessor] Ping"
@@ -302,8 +334,8 @@ module MacroDeck
 								puts "[MacroDeck::TurkEventProcessor] All answers answered - making child."
 
 								item.class.turk_tasks.each do |tt|
-									if tt.id == resp_key
-										puts "[MacroDeck::TurkEventProcessor] Not checking #{tt.id} because it is the task we're currently processing and that would be stupid."
+									if path_components.join("/").include?(tt.id)
+										puts "[MacroDeck::TurkEventProcessor] Not checking #{tt.id} because it is already in our path, so we either answered it or are answering it."
 									else
 										puts "[MacroDeck::TurkEventProcessor] Checking if #{tt.id} is answered..."
 
@@ -323,8 +355,8 @@ module MacroDeck
 
 							# Parent is not an array
 							item.class.turk_tasks.each do |tt|
-								if tt.id == resp_key
-									puts "[MacroDeck::TurkEventProcessor] Not checking #{tt.id} because it is the task we're currently processing and that would be stupid."
+								if path_components.join("/").include?(tt.id)
+									puts "[MacroDeck::TurkEventProcessor] Not checking #{tt.id} because it is already in our path, so we either answered it or are answering it."
 								else
 									puts "[MacroDeck::TurkEventProcessor] Checking if #{tt.id} is answered..."
 									if tt.prerequisites_met?(item.turk_responses) && !tt.answered?(item.turk_responses)
