@@ -151,6 +151,8 @@ module MacroDeck
 					incorrect_assignments = []
 					the_answer = nil
 
+					puts "[MacroDeck::TurkEventProcessor] Checking worker agreement score..."
+
 					@hit_review_results.hit_review_report.each do |report|
 						if report[:type] == "result" && report[:key] == "WorkerAgreementScore"
 							if report[:value].to_i == 100
@@ -160,6 +162,8 @@ module MacroDeck
 							end
 						end
 					end
+
+					puts "[MacroDeck::TurkEventProcessor] Approving/rejecting assignments..."
 
 					# Loop through HIT assignments and approve/deny as needed.
 					# Also get the plurality answer.
@@ -173,8 +177,11 @@ module MacroDeck
 								end
 							end
 							assignment.approve!("The majority of workers agreed with your answer.") if assignment.status == "Submitted"
+
+							puts "[MacroDeck::TurkEventProcessor] Approved assignment ID #{assignment.id}"
 						elsif incorrect_assignments.include?(assignment.id)
 							assignment.reject!("The majority of workers disagreed with your answer.") if assignment.status == "Submitted"
+							puts "[MacroDeck::TurkEventProcessor] Rejected assignment ID #{assignment.id}"
 						else
 							puts "[MacroDeck::TurkEventProcessor] *** Assignment ID #{assignment.id} is neither correct nor incorrect."
 						end
@@ -183,6 +190,8 @@ module MacroDeck
 					# Get the path components and response key.
 					path_components = annotation["path"].split("/")[1..-1]
 					resp_key = path_components.last
+
+					puts "[MacroDeck::TurkEventProcessor] Saving response..."
 
 					# Look up the turk task and if there are prerequisites, properly
 					# set the root of the tree to the prerequisite values.
@@ -210,6 +219,7 @@ module MacroDeck
 					item.save
 
 					puts "[MacroDeck::TurkEventProcessor] Creating new answer HIT..."
+					puts "[MacroDeck::TurkEventProcessor] Response Key = #{resp_key}"
 
 					# Does this answer have a parent? (path length != 1)
 					# Yes -> Is parent an array?
@@ -228,7 +238,7 @@ module MacroDeck
 
 						# It doesn't, is this answer an array?
 						if the_answer.is_a?(Array)
-							puts "[MacroDeck::TurkEventProcessor] Answer is an array."
+							puts "[MacroDeck::TurkEventProcessor] Answer with no parent is an array."
 
 							# Get next task (this is an array).
 							item.class.turk_tasks.each do |tt|
@@ -265,7 +275,7 @@ module MacroDeck
 								end
 							end
 						else
-							puts "[MacroDeck::TurkEventProcessor] Answer is not an array."
+							puts "[MacroDeck::TurkEventProcessor] Answer with no parent is not an array."
 
 							# Get next task (this is not an array).
 							item.class.turk_tasks.each do |tt|
@@ -290,7 +300,7 @@ module MacroDeck
 						# Parent an array? (Check path up until second-to-last component
 						# to see if it has an =)
 						if path_components[-2].include?("=")
-							puts "[MacroDeck::TurkEventProcessor] Parent is an array."
+							puts "[MacroDeck::TurkEventProcessor] Answer has a parent and it is an array."
 
 							# Parent is an array
 							parent = item.turk_responses # which is wrong, we will eventually have a valid parent.
@@ -336,6 +346,8 @@ module MacroDeck
 								item.class.turk_tasks.each do |tt|
 									if path_components.join("/").include?(tt.id)
 										puts "[MacroDeck::TurkEventProcessor] Not checking #{tt.id} because it is already in our path, so we either answered it or are answering it."
+									elsif !tt.prerequisites.include?(resp_key)
+										puts "[MacroDeck::TurkEventProcessor] Not checking #{tt.id} because it doesn't have #{resp_key} as a prerequisite."
 									else
 										puts "[MacroDeck::TurkEventProcessor] Checking if #{tt.id} is answered..."
 
@@ -351,12 +363,14 @@ module MacroDeck
 								end
 							end
 						else
-							puts "[MacroDeck::TurkEventProcessor] Parent is not an array."
+							puts "[MacroDeck::TurkEventProcessor] Answer with parent is not an array."
 
 							# Parent is not an array
 							item.class.turk_tasks.each do |tt|
 								if path_components.join("/").include?(tt.id)
 									puts "[MacroDeck::TurkEventProcessor] Not checking #{tt.id} because it is already in our path, so we either answered it or are answering it."
+								elsif !tt.prerequisites.include?(resp_key)
+									puts "[MacroDeck::TurkEventProcessor] Not checking #{tt.id} because it doesn't have #{resp_key} as a prerequisite."
 								else
 									puts "[MacroDeck::TurkEventProcessor] Checking if #{tt.id} is answered..."
 									if tt.prerequisites_met?(item.turk_responses) && !tt.answered?(item.turk_responses)
@@ -370,6 +384,8 @@ module MacroDeck
 							end
 						end
 					end
+
+					puts "[MacroDeck::TurkEventProcessor] #{@hit_id} HITReviewable - marking as processed"
 
 					# Mark event as processed.
 					item.turk_events["hit_reviewable"][@hit_id] = Time.new.getutc.iso8601
