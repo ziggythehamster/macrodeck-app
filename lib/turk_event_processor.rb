@@ -170,6 +170,8 @@ module MacroDeck
 					@hit.assignments.each do |assignment|
 						if correct_assignments.include?(assignment.id)
 							if the_answer.nil?
+								puts "[MacroDeck::TurkEventProcessor] Answer currently unknown - getting answer from assignment ID #{assignment.id}"
+
 								if assignment.answers.key?("answer[]")
 									the_answer = assignment.answers["answer[]"].split("|")
 								else
@@ -192,6 +194,7 @@ module MacroDeck
 					resp_key = path_components.last
 
 					puts "[MacroDeck::TurkEventProcessor] Saving response..."
+					puts "[MacroDeck::TurkEventProcessor] Path=#{annotation["path"]} Answer=#{the_answer.inspect}"
 
 					# Look up the turk task and if there are prerequisites, properly
 					# set the root of the tree to the prerequisite values.
