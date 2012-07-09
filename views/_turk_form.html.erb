@@ -10,6 +10,7 @@
 	end
 	%>
 	<% if behavior.nil? %>
+		<!-- behavior <%= Rack::Utils.escape_html(task.field_behavior) %> does not exist -->
 		<div class="field">
 			<label for="<%= Rack::Utils.escape_html(task.field["name"].to_s) %>"><%= Rack::Utils.escape_html(task.class.human_attribute_name(task.field["name"].to_sym)) %></label>
 			<input type="text" name="<%= Rack::Utils.escape_html(task.field["name"].to_s) %>" value="<%= Rack::Utils.escape_html(task.send(task.field["name"].to_sym).to_s) %>" />
