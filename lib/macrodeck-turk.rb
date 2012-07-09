@@ -99,7 +99,7 @@ module MacroDeck
 					task = obj.class.turk_task_by_id(path_components[-1])
 				end
 
-				puts "Rendering question form for #{task.id}"
+				puts "Rendering question form for #{task.id}. Behavior: #{task.field_behavior}"
 
 				erb :"turk_question.html", :layout => self.configuration.layout.to_sym, :locals => { :task => task, :item => obj, :assignment_id => params[:assignmentId] }
 			else
