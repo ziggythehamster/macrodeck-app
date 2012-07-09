@@ -53,6 +53,13 @@ module MacroDeck
 					input << "<a id=\"addbutton-#{Rack::Utils.escape_html(name.to_s)}\" href=\"#\" onclick=\"$(this).before('#{blank_input}');\">add item to list</a>\n"
 					input << "<!-- end array -->\n"
 				else
+					# Support having a different field name and HTML name.
+					if options[:name].nil?
+						name = field
+					else
+						name = options.delete(:name)
+					end
+
 					input = "<input type=\"#{Rack::Utils.escape_html(type.to_s)}\" name=\"#{Rack::Utils.escape_html(name.to_s)}\" value=\"#{Rack::Utils.escape_html(@data_object.send(field.to_sym))}\" "
 					options.each do |k,v|
 						input << "#{Rack::Utils.escape_html(k.to_s)}=\"#{Rack::Utils.escape_html(v.to_s)}\" "
