@@ -243,36 +243,42 @@ module MacroDeck
 						if the_answer.is_a?(Array)
 							puts "[MacroDeck::TurkEventProcessor] Answer with no parent is an array."
 
-							# Get next task (this is an array).
-							item.class.turk_tasks.each do |tt|
-								if tt.id == resp_key
-									puts "[MacroDeck::TurkEventProcessor] Not checking #{tt.id} because it is the task we're currently processing and that would be stupid."
-								else
-									puts "[MacroDeck::TurkEventProcessor] Checking if #{tt.id} is answerable..."
+							# Iterate the answers array. This is because we might be branching off into
+							# multiple trees.
+							the_answer.each do |answer|
+								puts "[MacroDeck::TurkEventProcessor] Checking answer item: #{answer.inspect}"
 
-									resp = { resp_key => [ item.turk_responses[resp_key].first ] }
-									path = "/#{resp_key}=#{item.turk_responses[resp_key].first}/#{tt.id}"
-
-									if tt.prerequisites_met?(resp) && !tt.answered?(resp)
-										create_hit({
-											"item_id" => item.id,
-											"path" => path
-										})
+								# Get next task (this is an array).
+								item.class.turk_tasks.each do |tt|
+									if tt.id == resp_key
+										puts "[MacroDeck::TurkEventProcessor] Not checking #{tt.id} because it is the task we're currently processing and that would be stupid."
 									else
-										# Print out some debugging information so we can figure out why a task isn't answerable
+										puts "[MacroDeck::TurkEventProcessor] Checking if #{tt.id} is answerable..."
 
-										puts "[MacroDeck::TurkEventProcessor] #{tt.id} is not answerable."
+										resp = { resp_key => [ answer ] }
+										path = "/#{resp_key}=#{answer}/#{tt.id}"
 
-										if tt.prerequisites_met?(resp)
-											puts "[MacroDeck::TurkEventProcessor] #{tt.id} prerequisites met? Yes."
+										if tt.prerequisites_met?(resp) && !tt.answered?(resp)
+											create_hit({
+												"item_id" => item.id,
+												"path" => path
+											})
 										else
-											puts "[MacroDeck::TurkEventProcessor] #{tt.id} prerequisites met? No."
-										end
+											# Print out some debugging information so we can figure out why a task isn't answerable
 
-										if tt.answered?(resp)
-											puts "[MacroDeck::TurkEventProcessor] #{tt.id} answered? Yes."
-										else
-											puts "[MacroDeck::TurkEventProcessor] #{tt.id} answered? No."
+											puts "[MacroDeck::TurkEventProcessor] #{tt.id} is not answerable."
+
+											if tt.prerequisites_met?(resp)
+												puts "[MacroDeck::TurkEventProcessor] #{tt.id} prerequisites met? Yes."
+											else
+												puts "[MacroDeck::TurkEventProcessor] #{tt.id} prerequisites met? No."
+											end
+
+											if tt.answered?(resp)
+												puts "[MacroDeck::TurkEventProcessor] #{tt.id} answered? Yes."
+											else
+												puts "[MacroDeck::TurkEventProcessor] #{tt.id} answered? No."
+											end
 										end
 									end
 								end
