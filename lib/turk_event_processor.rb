@@ -350,7 +350,7 @@ module MacroDeck
 
 							# Make the child if needed.
 							if make_child
-								puts "[MacroDeck::TurkEventProcessor] All answers answered - making child."
+								puts "[MacroDeck::TurkEventProcessor] All answers answered - possibly making child."
 
 								item.class.turk_tasks.each do |tt|
 									if path_components.join("/").include?(tt.id)
