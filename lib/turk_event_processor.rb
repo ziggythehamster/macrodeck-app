@@ -221,6 +221,9 @@ module MacroDeck
 					# Save item.
 					item.save
 
+					# Get a response tree.
+					response_tree = MacroDeck::TurkResponseTree::Tree.new(item.turk_responses)
+
 					puts "[MacroDeck::TurkEventProcessor] Creating new answer HIT..."
 					puts "[MacroDeck::TurkEventProcessor] Response Key = #{resp_key}"
 
@@ -312,15 +315,8 @@ module MacroDeck
 							puts "[MacroDeck::TurkEventProcessor] Answer has a parent and it is an array."
 
 							# Parent is an array
-							parent = item.turk_responses # which is wrong, we will eventually have a valid parent.
-							# -3 is intentional.
-							path_components[0..-3].each do |p|
-								if p.include?("=")
-									parent = parent[p]
-								else
-									parent = parent["#{p}="]
-								end
-							end
+							parent = response_tree.at_path(path_components[0..-3].join("/"))
+
 							# here's where we do -2
 							parent_key = path_components[-2].split("=")[0]
 							parent_answers = parent[parent_key]
