@@ -13,13 +13,14 @@ module MacroDeck
 			def initialize(hash)
 				@hash = hash
 				@paths = {} # To expedite lookup
+				@values_at_paths = {} # To expedite lookup
 			end
 
 			def [](key)
 				@hash[key]
 			end
 
-			# Returns the data at the path requested.
+			# Returns the tree at the path requested.
 			# Raises InvalidPathError if the path doesn't exist.
 			def at_path(path)
 				return @paths[path] if @paths.key?(path)
@@ -51,6 +52,58 @@ module MacroDeck
 				# root at this point is what we will return.
 				@paths[path] = root
 				return @paths[path]
+			end
+
+			# Similar to +at_path+, except that it returns the value at the path
+			# requested, and can't be used to further traverse the tree.
+			def value_at_path(path)
+				return @values_at_paths[path] if @values_at_paths.key?(path)
+
+				# Look up!
+				if path =~ %r{^/}
+					path_components = path.split("/")[1..-1]
+				else
+					path_components = path.split("/")
+				end
+
+				root = @hash
+				val = nil
+				path_components.each do |p|
+					# See if this is the last path component (we need the value)
+					if p == path_components.last
+						if p.include?("=")
+							if root.key?(p.split("=")[0])
+								root = root[p.split("=")[0]]
+							else
+								raise InvalidPathError, "#{p.split("=")[0]} not found"
+							end
+						else
+							if root.key(p)
+								root = root[p]
+							else
+								raise InvalidPathError, "#{p} not found"
+							end
+						end
+					else
+						if p.include?("=")
+							if root.key?(p)
+								root = root[p]
+							else
+								raise InvalidPathError, "#{p} not found"
+							end
+						else
+							if root.key?("#{p}=")
+								root = root["#{p}="]
+							else
+								raise InvalidPathError, "#{p}= not found"
+							end
+						end
+					end
+
+					@values_at_paths[path] = root
+					return @values_at_paths[path]
+				end
+
 			end
 		end
 	end
