@@ -12,6 +12,7 @@ require 'uuidtools'
 require 'erb'
 require "turk_signer"
 require "turk_event_processor"
+require "turk_response_tree"
 
 module MacroDeck
 	class Turk < Sinatra::Base
