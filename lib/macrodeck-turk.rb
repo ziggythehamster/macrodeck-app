@@ -93,6 +93,7 @@ module MacroDeck
 				# Render the question
 				task = nil
 				answers = obj.turk_responses
+				answer_tree = MacroDeck::TurkResponseTree::Tree.new(answers)
 
 				if path_components[-1].include?("=")
 					task = obj.class.turk_task_by_id(path_components[-1].split("=")[0])
@@ -100,9 +101,28 @@ module MacroDeck
 					task = obj.class.turk_task_by_id(path_components[-1])
 				end
 
+				# Map turk fields to values, if possible.
+				value_map = {}
+
+				path_components.each_index do |idx|
+					# If the path component contains an =, we have the value and needn't look it up.
+					if path_components[idx].include?("=")
+						tt = obj.class.turk_task_by_id(path_components[idx].split("=")[0])
+						if tt
+							value_map[tt.field["name"]] = path_components[idx].split("=")[1]
+						else
+							raise "Turk task lookup failed!"
+						end
+					else
+						tt = obj.class.turk_task_by_id(path_components[idx])
+						value_map[tt.field["name"]] = answer_tree.value_at_path(path_components[0..idx].join("/"))
+					end
+				end
+
+				raise obj.class.turk_fields.inspect
 				puts "Rendering question form for #{task.id}. Behavior: #{task.field_behavior}"
 
-				erb :"turk_question.html", :layout => self.configuration.layout.to_sym, :locals => { :task => task, :item => obj, :assignment_id => params[:assignmentId] }
+				erb :"turk_question.html", :layout => self.configuration.layout.to_sym, :locals => { :task => task, :item => obj, :assignment_id => params[:assignmentId], :value_map => value_map }
 			else
 				erb :"turk_no_questions.html", :layout => self.configuration.layout.to_sym
 			end
