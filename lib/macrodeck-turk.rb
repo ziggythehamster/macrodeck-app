@@ -109,17 +109,41 @@ module MacroDeck
 					if path_components[idx].include?("=")
 						tt = obj.class.turk_task_by_id(path_components[idx].split("=")[0])
 						if tt
-							value_map[tt.field["name"]] = path_components[idx].split("=")[1]
+							if tt.field["type"].is_a?(Array)
+								type = tt.field["type"][0]
+							else
+								type = tt.field["type"]
+							end
+
+							if type.include?("#")
+								value_map[tt.field["name"]] = [type.split("#")[1], path_components[idx].split("=")[1]]
+							else
+								value_map[tt.field["name"]] = [type, path_components[idx].split("=")[1]]
+							end
 						else
 							raise "Turk task lookup failed!"
 						end
 					else
 						tt = obj.class.turk_task_by_id(path_components[idx])
-						value_map[tt.field["name"]] = answer_tree.value_at_path(path_components[0..idx].join("/"))
+
+						if tt
+							if tt.field["type"].is_a?(Array)
+								type = tt.field["type"][0]
+							else
+								type = tt.field["type"]
+							end
+
+							if tt.field["type"].include?("#")
+								value_map[tt.field["name"]] = [type.split("#")[1], answer_tree.value_at_path(path_components[0..idx].join("/"))]
+							else
+								value_map[tt.field["name"]] = [type, answer_tree.value_at_path(path_components[0..idx].join("/"))]
+							end
+						else
+							raise "Turk task lookup failed!"
+						end
 					end
 				end
 
-				raise obj.class.turk_fields.inspect
 				puts "Rendering question form for #{task.id}. Behavior: #{task.field_behavior}"
 
 				erb :"turk_question.html", :layout => self.configuration.layout.to_sym, :locals => { :task => task, :item => obj, :assignment_id => params[:assignmentId], :value_map => value_map }
