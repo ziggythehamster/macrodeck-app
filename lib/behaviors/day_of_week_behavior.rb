@@ -46,6 +46,10 @@ module MacroDeck
 			end
 		end
 
+		def to_human_string(value)
+			return get_day_string(value.to_i)
+		end
+
 		private
 			# TODO: I18n this by looking up the translation for these.
 			def get_day_string(int)
