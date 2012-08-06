@@ -116,9 +116,17 @@ module MacroDeck
 							end
 
 							if type.include?("#")
-								value_map[tt.field["name"]] = [type.split("#")[1], path_components[idx].split("=")[1]]
+								begin
+									value_map[tt.field["name"]] = [type.split("#")[1], path_components[idx].split("=")[1]]
+								rescue MacroDeck::TurkResponseTree::InvalidPathError
+									value_map[tt.field["name"]] = nil
+								end
 							else
-								value_map[tt.field["name"]] = [type, path_components[idx].split("=")[1]]
+								begin
+									value_map[tt.field["name"]] = [type, path_components[idx].split("=")[1]]
+								rescue MacroDeck::TurkResponseTree::InvalidPathError
+									value_map[tt.field["name"]] = nil
+								end
 							end
 						else
 							raise "Turk task lookup failed!"
@@ -134,9 +142,17 @@ module MacroDeck
 							end
 
 							if tt.field["type"].include?("#")
-								value_map[tt.field["name"]] = [type.split("#")[1], answer_tree.value_at_path(path_components[0..idx].join("/"))]
+								begin
+									value_map[tt.field["name"]] = [type.split("#")[1], answer_tree.value_at_path(path_components[0..idx].join("/"))]
+								rescue MacroDeck::TurkResponseTree::InvalidPathError
+									value_map[tt.field["name"]] = nil
+								end
 							else
-								value_map[tt.field["name"]] = [type, answer_tree.value_at_path(path_components[0..idx].join("/"))]
+								begin
+									value_map[tt.field["name"]] = [type, answer_tree.value_at_path(path_components[0..idx].join("/"))]
+								rescue MacroDeck::TurkResponseTree::InvalidPathError
+									value_map[tt.field["name"]] = nil
+								end
 							end
 						else
 							raise "Turk task lookup failed!"
