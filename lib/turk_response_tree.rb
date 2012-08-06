@@ -24,14 +24,16 @@ module MacroDeck
 			# Returns the tree at the path requested.
 			# Raises InvalidPathError if the path doesn't exist.
 			def at_path(path)
-				return @paths[path] if @paths.key?(path)
+				if path =~ %r{^/}
+					normalized_path = path
+				else
+					normalized_path = "/#{path}"
+				end
+
+				return @paths[normalized_path] if @paths.key?(normalized_path)
 
 				# Looks like we have to look this up.
-				if path =~ %r{^/}
-					path_components = path.split("/")[1..-1]
-				else
-					path_components = path.split("/")
-				end
+				path_components = normalized_path.split("/")[1..-1]
 
 				root = @hash
 				path_components.each do |p|
@@ -51,8 +53,8 @@ module MacroDeck
 				end
 
 				# root at this point is what we will return.
-				@paths[path] = root
-				return @paths[path]
+				@paths[normalized_path] = root
+				return @paths[normalized_path]
 			end
 
 			# Similar to +at_path+, except that it returns the value at the path
