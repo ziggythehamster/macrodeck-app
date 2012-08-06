@@ -4,7 +4,7 @@
 		title = task.title
 
 		value_map.each_pair do |key, value|
-			if value[1] != {}
+			if !value.nil? && value.length == 2 && value[1] != {}
 				begin
 					value_behavior = "MacroDeck::#{value[0]}Behavior".constantize
 					value_behavior = value_behavior.new(task)
