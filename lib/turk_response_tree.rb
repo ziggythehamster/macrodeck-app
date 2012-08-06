@@ -12,6 +12,7 @@ module MacroDeck
 			# response tree.
 			def initialize(hash)
 				@hash = hash
+				@hash ||= {} # Turk responses can initialize to nil
 				@paths = {} # To expedite lookup
 				@values_at_paths = {} # To expedite lookup
 			end
@@ -72,13 +73,13 @@ module MacroDeck
 					# See if this is the last path component (we need the value)
 					if p == path_components.last
 						if p.include?("=")
-							if root.key?(p.split("=")[0])
+							if !root.nil? && root.key?(p.split("=")[0])
 								root = root[p.split("=")[0]]
 							else
 								raise InvalidPathError, "#{p.split("=")[0]} not found"
 							end
 						else
-							if root.key(p)
+							if !root.nil? && root.key?(p)
 								root = root[p]
 							else
 								raise InvalidPathError, "#{p} not found"
