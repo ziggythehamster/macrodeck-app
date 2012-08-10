@@ -102,20 +102,34 @@ module MacroDeck
 						annotation = {}
 					end
 
-					# Get the item we're operating on.
-					item = ::DataObject.get(annotation["item_id"])
-					item.turk_events ||= {}
-					item.turk_events["assignment_submitted"] ||= {}
+					retries = 0
 
-					# Check if we have already worked on this item.
-					if !item.turk_events["assignment_submitted"][@assignment_id].nil?
-						puts "[MacroDeck::TurkEventProcessor] Not processing - event already processed for Assignment ID #{@assignment_id}"
-						return
+					begin
+						# Get the item we're operating on.
+						item = ::DataObject.get(annotation["item_id"])
+						item.turk_events ||= {}
+						item.turk_events["assignment_submitted"] ||= {}
+
+						# Check if we have already worked on this item.
+						if !item.turk_events["assignment_submitted"][@assignment_id].nil?
+							puts "[MacroDeck::TurkEventProcessor] Not processing - event already processed for Assignment ID #{@assignment_id}"
+							return
+						end
+
+						# Mark event as processed.
+						item.turk_events["assignment_submitted"][@assignment_id] = Time.new.getutc.iso8601
+						item.save
+					rescue RestClient::Conflict
+						# We had a conflict. See assignment accepted for explanation.
+
+						if retries < 10
+							retries += 1
+							puts "[MacroDeck::TurkEventProcessor] 409 Conflict while saving - retry #{retries}"
+							retry
+						else
+							puts "[MacroDeck::TurkEventProcessor] 409 Conflict while saving - giving up"
+						end
 					end
-
-					# Mark event as processed.
-					item.turk_events["assignment_submitted"][@assignment_id] = Time.new.getutc.iso8601
-					item.save
 				end
 			end
 
