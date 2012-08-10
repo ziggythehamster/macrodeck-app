@@ -55,20 +55,35 @@ module MacroDeck
 						annotation = {}
 					end
 
-					# Get the item we're operating on.
-					item = ::DataObject.get(annotation["item_id"])
-					item.turk_events ||= {}
-					item.turk_events["assignment_accepted"] ||= {}
+					retries = 0
 
-					# Check if we have already worked on this item.
-					if !item.turk_events["assignment_accepted"][@assignment_id].nil?
-						puts "[MacroDeck::TurkEventProcessor] Not processing - event already processed for Assignment ID #{@assignment_id}"
-						return
+					begin
+						# Get the item we're operating on.
+						item = ::DataObject.get(annotation["item_id"])
+						item.turk_events ||= {}
+						item.turk_events["assignment_accepted"] ||= {}
+
+						# Check if we have already worked on this item.
+						if !item.turk_events["assignment_accepted"][@assignment_id].nil?
+							puts "[MacroDeck::TurkEventProcessor] Not processing - event already processed for Assignment ID #{@assignment_id}"
+							return
+						end
+
+						# Mark event as processed.
+						item.turk_events["assignment_accepted"][@assignment_id] = Time.new.getutc.iso8601
+						item.save
+					rescue RestClient::Conflict
+						# We had a conflict when saving the item. Let's retry until we are able to save without a conflict.
+						# This could cause an infinite loop, so we don't retry after a certain number of retries.
+
+						if retries < 10
+							retries += 1
+							puts "[MacroDeck::TurkEventProcessor] 409 Conflict while saving - retry #{retries}"
+							retry
+						else
+							puts "[MacroDeck::TurkEventProcessor] 409 Conflict while saving - giving up"
+						end
 					end
-
-					# Mark event as processed.
-					item.turk_events["assignment_accepted"][@assignment_id] = Time.new.getutc.iso8601
-					item.save
 				end
 			end
 
