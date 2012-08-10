@@ -163,18 +163,6 @@ module MacroDeck
 						annotation = {}
 					end
 
-					# Get the item we're operating on.
-					item = ::DataObject.get(annotation["item_id"])
-					item.turk_responses ||= {}
-					item.turk_events ||= {}
-					item.turk_events["hit_reviewable"] ||= {}
-
-					# Check if we have already worked on this item.
-					if !item.turk_events["hit_reviewable"][@hit_id].nil?
-						puts "[MacroDeck::TurkEventProcessor] Not processing - event already processed for HIT ID #{@hit_id}"
-						return
-					end
-
 					# Get assignment IDs that have the correct answer and those that don't.
 					correct_assignments = []
 					incorrect_assignments = []
@@ -225,30 +213,61 @@ module MacroDeck
 					puts "[MacroDeck::TurkEventProcessor] Saving response..."
 					puts "[MacroDeck::TurkEventProcessor] Path=#{annotation["path"]} Answer=#{the_answer.inspect}"
 
-					# Look up the turk task and if there are prerequisites, properly
-					# set the root of the tree to the prerequisite values.
-					root = item.turk_responses
-					path_components[0..-2].each do |p|
-						if p.include?("=")
-							root = root[p]
+					retries = 0
+
+					# Wrap the saving part in a begin/end so that we can trap conflicts.
+					begin
+						# Get the item we're operating on.
+						item = ::DataObject.get(annotation["item_id"])
+						item.turk_responses ||= {}
+						item.turk_events ||= {}
+						item.turk_events["hit_reviewable"] ||= {}
+
+						# Check if we have already worked on this item.
+						if !item.turk_events["hit_reviewable"][@hit_id].nil?
+							puts "[MacroDeck::TurkEventProcessor] Not processing - event already processed for HIT ID #{@hit_id}"
+							return
+						end
+
+						# Look up the turk task and if there are prerequisites, properly
+						# set the root of the tree to the prerequisite values.
+						root = item.turk_responses
+						path_components[0..-2].each do |p|
+							if p.include?("=")
+								root = root[p]
+							else
+								root = root["#{p}="]
+							end
+						end
+
+						# Is answer an array?
+						if the_answer.is_a?(Array)
+							root[resp_key] = the_answer
+							root[resp_key].each do |resp_val|
+								root["#{resp_key}=#{resp_val}"] = {}
+							end
 						else
-							root = root["#{p}="]
+							root[resp_key] = the_answer
+							root["#{resp_key}="] = {}
+						end
+
+						# Mark event as processed.
+						item.turk_events["hit_reviewable"][@hit_id] = Time.new.getutc.iso8601
+
+						# Save item.
+						item.save
+					rescue RestClient::Conflict => ex
+						# We had a conflict. See assignment accepted for explanation.
+
+						if retries < 10
+							retries += 1
+							puts "[MacroDeck::TurkEventProcessor] 409 Conflict while saving - retry #{retries}"
+							retry
+						else
+							puts "[MacroDeck::TurkEventProcessor] 409 Conflict while saving - giving up and dying horribly"
+							raise ex
 						end
 					end
-
-					# Is answer an array?
-					if the_answer.is_a?(Array)
-						root[resp_key] = the_answer
-						root[resp_key].each do |resp_val|
-							root["#{resp_key}=#{resp_val}"] = {}
-						end
-					else
-						root[resp_key] = the_answer
-						root["#{resp_key}="] = {}
-					end
-
-					# Save item.
-					item.save
 
 					# Get a response tree.
 					response_tree = MacroDeck::TurkResponseTree::Tree.new(item.turk_responses)
@@ -418,12 +437,6 @@ module MacroDeck
 							end
 						end
 					end
-
-					puts "[MacroDeck::TurkEventProcessor] #{@hit_id} HITReviewable - marking as processed"
-
-					# Mark event as processed.
-					item.turk_events["hit_reviewable"][@hit_id] = Time.new.getutc.iso8601
-					item.save
 				end
 			end
 
