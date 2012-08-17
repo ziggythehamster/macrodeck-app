@@ -25,6 +25,8 @@ module MacroDeck
 			@hit_id = params[:hit_id]
 			@assignment_id = params[:assignment_id]
 			@configuration = params[:configuration]
+
+			@hits_created = 0
 		end
 
 		# Cause this event to process.
@@ -270,7 +272,7 @@ module MacroDeck
 					end
 
 					# Get a response tree.
-					response_tree = MacroDeck::TurkResponseTree::Tree.new(item.turk_responses)
+					response_tree = MacroDeck::TurkResponseTree::Tree.new(item)
 
 					puts "[MacroDeck::TurkEventProcessor] Creating new answer HIT..."
 					puts "[MacroDeck::TurkEventProcessor] Response Key = #{resp_key}"
@@ -437,6 +439,40 @@ module MacroDeck
 							end
 						end
 					end
+
+					# Check if we are completely done processing this.
+					puts "[MacroDeck::TurkEventProcessor] Checking if we are finished processing..."
+
+					if @hits_created == 0
+						are_we_done_yet = true
+
+						# Loop through turk tasks. find a path that has that turk task? good! otherwise bad.
+						item.class.turk_tasks.each do |tt|
+							puts "[MacroDeck::TurkEventProcessor] Looking for #{tt.id}..."
+							found_a_match = false
+
+							response_tree.all_paths.each do |path|
+								if path.include?(tt.id)
+									puts "[MacroDeck::TurkEventProcessor] #{tt.id} found in #{path}!"
+									found_a_match = true
+									break
+								end
+							end
+
+							# If we did not find a match, we are not done yet, so stop processing at this point.
+							unless found_a_match
+								puts "[MacroDeck::TurkEventProcessor] Did not find a match, we're not done :("
+								are_we_done_yet = false
+								break
+							end
+						end
+
+						# are_we_done_yet should be true if we're going to the showcase showdown.
+						if are_we_done_yet
+							puts "[MacroDeck::TurkEventProcessor] Time for the showcase showdown!"
+							# TODO.
+						end
+					end
 				end
 			end
 
@@ -455,6 +491,8 @@ module MacroDeck
 					h.question("#{@configuration.base_url}/turk/#{params["item_id"]}")
 					h.hit_review_policy("SimplePlurality/2011-09-01", @configuration.hit_review_policy_defaults)
 				end
+
+				@hits_created += 1
 				return hit
 			end
 	end
