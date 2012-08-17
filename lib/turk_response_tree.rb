@@ -8,17 +8,33 @@ module MacroDeck
 		# verified answers from a Turk. The hash can be accessed
 		# using a URL-like path or by traversing the tree.
 		class Tree
-			# Pass in the response hash in order to be able to access the
+			# Pass in the item in order to be able to access the
 			# response tree.
-			def initialize(hash)
-				@hash = hash
-				@hash ||= {} # Turk responses can initialize to nil
+			def initialize(item)
+				@item = item
+				@hash = MacroDeck::PathableHash[item.turk_responses]
+				@hash ||= MacroDeck::PathableHash.new # Turk responses can initialize to nil
 				@paths = {} # To expedite lookup
 				@values_at_paths = {} # To expedite lookup
+				@all_paths = []
 			end
 
 			def [](key)
 				@hash[key]
+			end
+
+			# Returns a list of all paths
+			def all_paths
+				return @all_paths if @all_paths.length > 0
+
+				# Looks like we have to build a list of paths!
+				puts "[MacroDeck::TurkResponseTree::Tree] Getting all paths..."
+				@hash.each_path do |path, value|
+					if !@all_paths.include?(path)
+						puts "[MacroDeck::TurkResponseTree::Tree] Adding path #{path}"
+						@all_paths << path
+					end
+				end
 			end
 
 			# Returns the tree at the path requested.
