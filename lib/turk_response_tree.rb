@@ -11,9 +11,15 @@ module MacroDeck
 			# Pass in the item in order to be able to access the
 			# response tree.
 			def initialize(item)
+				raise "Passed item cannot be nil" if item.nil?
+
 				@item = item
-				@hash = MacroDeck::PathableHash[item.turk_responses]
-				@hash ||= MacroDeck::PathableHash.new # Turk responses can initialize to nil
+				if @item.turk_responses.nil?
+					@hash = MacroDeck::PathableHash.new # Turk responses can initialize to nil
+				else
+					@hash = MacroDeck::PathableHash[item.turk_responses]
+				end
+
 				@paths = {} # To expedite lookup
 				@values_at_paths = {} # To expedite lookup
 				@all_paths = []
