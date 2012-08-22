@@ -46,6 +46,8 @@ module MacroDeck
 			# Returns the tree at the path requested.
 			# Raises InvalidPathError if the path doesn't exist.
 			def at_path(path)
+				raise "Path cannot be nil." if path.nil?
+
 				if path =~ %r{^/}
 					normalized_path = path
 				else
@@ -58,6 +60,9 @@ module MacroDeck
 				path_components = normalized_path.split("/")[1..-1]
 
 				root = @hash
+
+				raise "Path components are nil somehow. Normalized path=#{normalized_path} Path=#{path}" if path_components.nil?
+
 				path_components.each do |p|
 					if p.include?("=")
 						if root.key?(p)
