@@ -93,7 +93,7 @@ module MacroDeck
 				# Render the question
 				task = nil
 				answers = obj.turk_responses
-				answer_tree = MacroDeck::TurkResponseTree::Tree.new(answers)
+				answer_tree = MacroDeck::TurkResponseTree::Tree.new(obj)
 
 				if path_components[-1].include?("=")
 					task = obj.class.turk_task_by_id(path_components[-1].split("=")[0])
