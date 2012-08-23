@@ -365,9 +365,10 @@ module MacroDeck
 							puts "[MacroDeck::TurkEventProcessor] Answer has a parent and it is an array."
 
 							# Parent is an array
-							parent_path = path_components[0..-3].join("/")
+							# We want the parent's path. Length is -1 because length is 1 based
+							# and -1 more (=-2) because we don't want the last one.
+							parent_path = path_components[0..(path_components.length - 2)].join("/")
 							puts "[MacroDeck::TurkEventProcessor] Parent path = #{parent_path}"
-							puts "[MacroDeck::TurkEventProcessor] Path components = #{path_components.inspect}"
 							parent = response_tree.at_path(parent_path)
 
 							# here's where we do -2
