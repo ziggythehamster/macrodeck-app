@@ -379,7 +379,7 @@ module MacroDeck
 							end
 
 							# Append the parent minus the value.
-							parent_path << path_components[path_components.length - 3].split("=")]0]
+							parent_path << path_components[path_components.length - 3].split("=")[0]
 
 							puts "[MacroDeck::TurkEventProcessor] Parent path = #{parent_path}"
 							parent = response_tree.at_path(parent_path)
