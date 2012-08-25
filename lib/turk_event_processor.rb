@@ -365,9 +365,22 @@ module MacroDeck
 							puts "[MacroDeck::TurkEventProcessor] Answer has a parent and it is an array."
 
 							# Parent is an array
-							# We want the parent's path. Length is -1 because length is 1 based
-							# and -1 more (=-2) because we don't want the last one.
-							parent_path = path_components[0..(path_components.length - 2)].join("/")
+							# First we want the path leading up to the parent because we are
+							# converting Task_Whatever=X to Task_Whatever. So this is length
+							# minus three because length is 1-based and that it's two from the end
+							# (parent + current)
+
+							# Check if length minus 3 is less than 0 - this means the parent path starts as /.
+							if path_components.length - 3 < 0
+								parent_path = "/"
+							else
+								parent_path = "/"
+								parent_path << path_components[0..(path_components.length - 3)].join("/")
+							end
+
+							# Append the parent minus the value.
+							parent_path << path_components[path_components.length - 3].split("=")]0]
+
 							puts "[MacroDeck::TurkEventProcessor] Parent path = #{parent_path}"
 							parent = response_tree.at_path(parent_path)
 
