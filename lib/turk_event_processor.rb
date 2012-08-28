@@ -379,14 +379,11 @@ module MacroDeck
 							end
 
 							# Append the parent minus the value.
-							parent_path << path_components[path_components.length - 3].split("=")[0]
+							parent_key = path_components[path_components.length - 3].split("=")[0]
+							parent_path << parent_key
 
 							puts "[MacroDeck::TurkEventProcessor] Parent path = #{parent_path}"
-							parent = response_tree.at_path(parent_path)
-
-							# here's where we do -2
-							parent_key = path_components[-2].split("=")[0]
-							parent_answers = parent[parent_key]
+							parent_answers = response_tree.value_at_path(parent_path)
 
 							make_child = true
 
@@ -395,19 +392,24 @@ module MacroDeck
 								puts "[MacroDeck::TurkEventProcessor] Checking if answer #{answer} is answered..."
 
 								# Check if answered
-								if !parent.key?("#{parent_key}=#{answer}") && !parent["#{parent_key}=#{answer}"].key?(resp_key)
-									puts "[MacroDeck::TurkEventProcessor] Nope! (Chuck Testa.)"
+								begin
+									sibling_result = response_tree.at_path("#{parent_path}=#{answer}")
+									if !sibling_result.key?(resp_key)
+										puts "[MacroDeck::TurkEventProcessor] Nope! (Chuck Testa.)"
 
-									make_child = false
+										make_child = false
 
-									path = "/#{path_components[0..-3].join("/")}/#{parent_key}=#{answer}/#{resp_key}"
+										path = "/#{path_components[0..-3].join("/")}/#{parent_key}=#{answer}/#{resp_key}"
 
-									create_hit({
-										"item_id" => item.id,
-										"path" => path
-									})
+										create_hit({
+											"item_id" => item.id,
+											"path" => path
+										})
 
-									break
+										break
+									end
+								rescue MacroDeck::TurkResponseTree::InvalidPathError
+									puts "[MacroDeck::TurkEventProcessor] Path #{parent_path}=#{answer} invalid!"
 								end
 							end
 
