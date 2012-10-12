@@ -5,6 +5,8 @@ require "sinatra"
 
 module MacroDeck
 	class Config
+		attr_reader :admin_username
+		attr_reader :admin_password
 		attr_reader :environment
 		attr_reader :layout
 		attr_reader :view_dir
@@ -21,8 +23,22 @@ module MacroDeck
 			File.open(yaml_path) do |yml|
 				@config = YAML::load(yml)
 			end
+
 			@environment = Sinatra::Application.environment.to_sym
+
 			if @config[@environment.to_s]
+				if @config[@environment.to_s]["admin_username"]
+					@admin_username = @config[@environment.to_s]["admin_username"]
+				else
+					@admin_username = "admin"
+				end
+
+				if @config[@environment.to_s]["admin_password"]
+					@admin_password = @config[@environment.to_s]["admin_password"]
+				else
+					@admin_password = "admin"
+				end
+
 				if @config[@environment.to_s]["layout"]
 					@layout = @config[@environment.to_s]["layout"]
 				else
