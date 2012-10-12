@@ -17,6 +17,10 @@ module MacroDeck
 
 		use Rack::MethodOverride # Allow browsers to use a RESTful API
 
+		use Rack::Auth::Basic, "Admin Area" do |username, password|
+			[username, password] == [self.configuration.admin_username, self.configuration.admin_password]
+		end
+
 		helpers do
 			include Rack::Utils
 			alias_method :h, :escape_html
