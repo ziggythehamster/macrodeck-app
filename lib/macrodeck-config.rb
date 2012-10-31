@@ -7,6 +7,7 @@ module MacroDeck
 	class Config
 		attr_reader :admin_username
 		attr_reader :admin_password
+		attr_reader :db_url
 		attr_reader :environment
 		attr_reader :layout
 		attr_reader :view_dir
@@ -37,6 +38,12 @@ module MacroDeck
 					@admin_password = @config[@environment.to_s]["admin_password"]
 				else
 					@admin_password = "admin"
+				end
+
+				if @config[@environment.to_s]["db_url"]
+					@db_url = @config[@environment.to_s]["db_url"]
+				else
+					@db_url = "macrodeck-#{@environment.to_s}"
 				end
 
 				if @config[@environment.to_s]["layout"]
