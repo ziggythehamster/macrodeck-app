@@ -5,16 +5,13 @@
 # License: GPL-2, MacroDeck owns all contributions and can re-release them under other licenses
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), "lib")
-$LOAD_PATH << File.join(File.dirname(__FILE__), "vendor", "rturk", "lib")
 
 # Ruby libraries.
 require "rubygems"
 require "builder"
 require "sinatra"
-require "vendor/rturk/lib/rturk"
 require "macrodeck-platform/init"
 require "macrodeck-app"
-require "macrodeck-turk"
 require "macrodeck-config"
 require "macrodeck-behavior"
 require "behaviors/abbreviation_behavior"
@@ -50,15 +47,6 @@ map cfg.path_prefix do
 	MacroDeck::App.set :public, File.join(File.dirname(__FILE__), "public")
 
 	run MacroDeck::App
-end
-
-# Turk app
-map cfg.turk_path_prefix do
-	MacroDeck::Turk.configuration = cfg
-	MacroDeck::Turk.set :views, File.join(File.dirname(__FILE__), ::MacroDeck::Turk.configuration.view_dir.to_s)
-	MacroDeck::Turk.set :public, File.join(File.dirname(__FILE__), "public")
-
-	run MacroDeck::Turk
 end
 
 # vim:set ft=ruby
