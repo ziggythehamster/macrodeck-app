@@ -109,10 +109,12 @@ module MacroDeck
 
 			# Configure RTurk if we have enough data
 			if @aws_access_key != "" && @aws_secret_access_key != ""
-				if @turk_sandbox
-					RTurk.setup(@aws_access_key, @aws_secret_access_key, :sandbox => true)
-				else
-					RTurk.setup(@aws_access_key, @aws_secret_access_key, :sandbox => false)
+				if defined?(RTurk)
+					if @turk_sandbox
+						RTurk.setup(@aws_access_key, @aws_secret_access_key, :sandbox => true)
+					else
+						RTurk.setup(@aws_access_key, @aws_secret_access_key, :sandbox => false)
+					end
 				end
 			end
 		end
